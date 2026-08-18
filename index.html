@@ -427,9 +427,29 @@
         let totalTariffPages = 1;
         let searchDebounceTimer = null;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            loadTariffData();
-        });
+        async function loadTariffData() {
+    const tbody = document.getElementById('tariffTableBody');
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري تحميل جدول التعرفة الجمركية...</span></div></td></tr>`;
+
+    try {
+        // استدعاء الملف مباشرة من نفس الفولدر باسم pricing.json
+        const response = await fetch('./pricing.json');
+        
+        if (!response.ok) {
+            throw new Error('فشل جلب الملف');
+        }
+
+        const data = await response.json();
+        allTariffData = Array.isArray(data) ? data : [];
+        filteredTariffData = allTariffData;
+        currentTariffPage = 1;
+        renderTariffTable();
+
+    } catch (error) {
+        console.error("خطأ في التحميل:", error);
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json. تأكد من وجوده بنفس المجلد.</td></tr>`;
+    }
+}
 
         function switchTab(tab) {
             const calcSec = document.getElementById('calculatorSection');
