@@ -43,8 +43,11 @@
             transform: scale(1.1) rotate(5deg);
         }
 
-        .invoice-print-only { display: none; }
+        .invoice-print-only {
+            display: none;
+        }
 
+        /* تبويب النشاط */
         .nav-tab.active {
             background-color: #2563eb;
             color: #ffffff;
@@ -52,17 +55,25 @@
         }
 
         @media print {
-            @page { size: A4 portrait; margin: 10mm; }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
             body { 
                 background-color: #ffffff !important; 
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 color: #000000 !important;
             }
-            .no-print, #loginScreen, nav, .fab-print, #costChartCard, .whatsapp-section, #tariffSection, #calcGoodsSection { 
+            
+            .no-print, #loginScreen, nav, .fab-print, #costChartCard, .whatsapp-section, #tariffSection, #goodsCalcSection { 
                 display: none !important; 
             }
-            .invoice-print-only { display: block !important; }
+            
+            .invoice-print-only {
+                display: block !important;
+            }
+
             #mainApp { display: block !important; }
             #resultsSection { 
                 opacity: 1 !important; 
@@ -70,10 +81,27 @@
                 pointer-events: auto !important; 
                 width: 100% !important;
             }
-            .max-w-6xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            .grid { display: block !important; }
-            .lg\:col-span-5, .lg\:col-span-7 { width: 100% !important; margin: 0 !important; display: block !important; }
-            section.lg\:col-span-5 { display: none !important; }
+
+            .max-w-6xl {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .grid { 
+                display: block !important; 
+            }
+            
+            .lg\:col-span-5, .lg\:col-span-7 { 
+                width: 100% !important; 
+                margin: 0 !important;
+                display: block !important; 
+            }
+
+            section.lg\:col-span-5 {
+                display: none !important;
+            }
+
             .invoice-box-print {
                 border: 2px solid #0f172a !important;
                 background: #ffffff !important;
@@ -81,6 +109,7 @@
                 border-radius: 16px !important;
                 box-shadow: none !important;
             }
+
             .result-card { 
                 background: #f8fafc !important; 
                 color: #0f172a !important; 
@@ -88,7 +117,10 @@
                 box-shadow: none !important;
                 margin-bottom: 15px !important;
             }
-            .result-card * { color: #0f172a !important; }
+            .result-card * { 
+                color: #0f172a !important; 
+            }
+
             .glass-panel { 
                 background: #ffffff !important;
                 border: 1px solid #cbd5e1 !important; 
@@ -142,15 +174,15 @@
 
                 <!-- أزرار التبديل بين الأقسام -->
                 <div class="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 flex-wrap justify-center gap-1">
-                    <button onclick="switchTab('calculator')" id="tabBtnCalc" class="nav-tab active px-4 py-2.5 rounded-xl font-black text-xs transition-all flex items-center gap-2">
+                    <button onclick="switchTab('calculator')" id="tabBtnCalc" class="nav-tab active px-4 py-2 rounded-xl font-black text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-calculator"></i>
                         <span>حاسبة ASYCUDA</span>
                     </button>
-                    <button onclick="switchTab('goods')" id="tabBtnGoods" class="nav-tab text-slate-600 hover:text-slate-900 px-4 py-2.5 rounded-xl font-black text-xs transition-all flex items-center gap-2">
+                    <button onclick="switchTab('goods')" id="tabBtnGoods" class="nav-tab text-slate-600 hover:text-slate-900 px-4 py-2 rounded-xl font-black text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-boxes-packing"></i>
                         <span>احسب بضاعتك</span>
                     </button>
-                    <button onclick="switchTab('tariff')" id="tabBtnTariff" class="nav-tab text-slate-600 hover:text-slate-900 px-4 py-2.5 rounded-xl font-black text-xs transition-all flex items-center gap-2">
+                    <button onclick="switchTab('tariff')" id="tabBtnTariff" class="nav-tab text-slate-600 hover:text-slate-900 px-4 py-2 rounded-xl font-black text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-table-list"></i>
                         <span>قسم التعرفة الجمركية</span>
                     </button>
@@ -166,6 +198,8 @@
 
         <!-- ==================== القسم الأول: حاسبة الأسيكودا ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- لوحة الإدخال -->
             <section class="lg:col-span-5 space-y-6 no-print">
                 <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white relative overflow-hidden hover-float">
                     <div class="mb-8">
@@ -210,6 +244,7 @@
                         </button>
                     </div>
 
+                    <!-- قسم الاستعلامات -->
                     <div class="mt-10 pt-8 border-t border-slate-100 whatsapp-section">
                         <div class="bg-emerald-50 rounded-3xl p-5 border border-emerald-100">
                             <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-2">
@@ -231,6 +266,7 @@
 
             <!-- لوحة النتائج والفاتورة التجارية -->
             <section id="resultsSection" class="lg:col-span-7 space-y-6 opacity-30 grayscale pointer-events-none transition-all duration-1000">
+                
                 <div class="invoice-print-only invoice-box-print">
                     <div class="border-b-2 border-slate-900 pb-4 mb-5">
                         <div class="flex justify-between items-center">
@@ -297,139 +333,141 @@
         </div>
 
         <!-- ==================== القسم الجديد: احسب بضاعتك ==================== -->
-        <div id="calcGoodsSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div id="goodsCalcSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
+            <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
                 
-                <!-- لوحة إدخال وتصفح الـ HS CODE -->
-                <div class="lg:col-span-6 space-y-6">
-                    <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white relative hover-float">
-                        <div class="mb-6 border-b border-slate-100 pb-4">
-                            <h3 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-boxes-packing text-blue-600"></i>
-                                احسب بضاعتك
-                            </h3>
-                            <p class="text-xs text-slate-500 font-bold mt-1">حدد رمز HS CODE والكمية لإجراء الحاسبة الدقيقة للرسوم والضرائب</p>
-                        </div>
-
-                        <div class="space-y-5">
-                            <!-- البحث بالرمز -->
-                            <div class="relative">
-                                <label class="block text-xs font-black text-slate-700 mb-1">ابحث برمز HS CODE أو الوصف</label>
-                                <div class="relative">
-                                    <input type="text" id="hsCodeSearch" oninput="handleHsCodeSearch(this.value)" placeholder="أدخل رمز HS CODE..." 
-                                        class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                                    <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                </div>
-                                
-                                <!-- القائمة المنسدلة للنتائج -->
-                                <div id="hsSearchResults" class="hidden absolute right-0 left-0 top-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
-                            </div>
-
-                            <!-- تفاصيل البند المحدد -->
-                            <div id="selectedHsDetails" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                                <div class="flex justify-between text-xs font-bold">
-                                    <span class="text-slate-500">الرمز المحدد:</span>
-                                    <span id="detailHsCode" class="text-blue-600 font-mono font-black"></span>
-                                </div>
-                                <div class="flex justify-between text-xs font-bold">
-                                    <span class="text-slate-500">الوصف:</span>
-                                    <span id="detailHsDesc" class="text-slate-800 text-left max-w-[220px]"></span>
-                                </div>
-                                <div class="flex justify-between text-xs font-bold pt-2 border-t border-slate-200">
-                                    <span class="text-emerald-600">نسبة الرسم الجمركي: <strong id="detailHsDuty">0%</strong></span>
-                                    <span class="text-indigo-600">نسبة الضريبة: <strong id="detailHsTax">0%</strong></span>
-                                </div>
-                            </div>
-
-                            <!-- إجمالي قيمة البضاعة بالدولار -->
-                            <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                                <label class="block text-[10px] font-black text-blue-600 mb-1">القيمة الإجمالية للبضاعة بالدولار ($)</label>
-                                <div class="flex items-center">
-                                    <span class="font-black text-slate-400 ml-2">$</span>
-                                    <input type="text" id="goodsAmount" oninput="formatCurrency(this)" class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900" placeholder="0">
-                                </div>
-                            </div>
-
-                            <!-- الكمية ووحدة القياس -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                                    <label class="block text-[10px] font-black text-blue-600 mb-1">الكمية (اختياري)</label>
-                                    <input type="number" id="goodsQty" class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900" placeholder="1">
-                                </div>
-
-                                <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                                    <label class="block text-[10px] font-black text-blue-600 mb-1">وحدة القياس</label>
-                                    <select id="goodsUnit" class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900 cursor-pointer">
-                                        <option value="عدد">عدد</option>
-                                        <option value="كغم">كغم</option>
-                                        <option value="طن">طن</option>
-                                        <option value="لتر">لتر</option>
-                                        <option value="متر">متر</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- مبالغ إضافية -->
-                            <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                                <label class="block text-[10px] font-black text-blue-600 mb-1">مبالغ إضافية (دينار عراقي)</label>
-                                <div class="flex items-center">
-                                    <span class="font-black text-slate-400 ml-2">IQD</span>
-                                    <input type="text" id="goodsExtraFee" oninput="formatCurrency(this)" class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900" placeholder="0">
-                                </div>
-                            </div>
-
-                            <button onclick="calculateGoodsCustoms()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
-                                <i class="fa-solid fa-calculator"></i>
-                                احسب الرسوم فوراً
-                            </button>
-                        </div>
-                    </div>
+                <div class="mb-8 border-b border-slate-200 pb-5">
+                    <h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+                        <i class="fa-solid fa-boxes-packing text-blue-600 text-3xl"></i>
+                        قسم احسب بضاعتك بالرموز الجمركية (HS Code)
+                    </h3>
+                    <p class="text-xs text-slate-500 font-bold mt-1">قم بالبحث عن رمز البضاعة لمعرفة نسب الرسوم والضريبة المعتمدة واحتساب الجمرك بدقة بالغة</p>
                 </div>
 
-                <!-- شاشة عرض نتائج احتساب البضاعة -->
-                <div class="lg:col-span-6 space-y-6">
-                    <div id="goodsResultCard" class="result-card p-1 rounded-[3rem] shadow-2xl animate-up hover-float">
-                        <div class="bg-white/5 rounded-[2.9rem] p-8 text-center text-white relative overflow-hidden">
-                            <span class="text-blue-400 text-xs font-black uppercase tracking-[0.2em]">المبلغ الإجمالي المترتب للكماليات والدفع</span>
-                            <h3 id="goodsDisplayFinal" class="text-4xl md:text-5xl font-black mt-3 tracking-tighter">0.00 <small class="text-xl font-bold opacity-50">د.ع</small></h3>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- نموذج الإدخال والبحث -->
+                    <div class="lg:col-span-6 space-y-5">
+                        
+                        <!-- البحث عن الرمز -->
+                        <div class="relative">
+                            <label class="block text-xs font-black text-slate-700 mb-2">ابحث برمز H.S Code أو اسم البضاعة:</label>
+                            <div class="relative">
+                                <input type="text" id="goodsHsSearch" oninput="filterGoodsHsCode()" placeholder="اكتب رمز الـ HS Code أو اسم البضاعة..." 
+                                    class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            </div>
+
+                            <!-- قائمة المقترحات -->
+                            <div id="goodsHsDropdown" class="absolute z-30 w-full bg-white border border-slate-200 rounded-2xl shadow-xl mt-1 max-h-60 overflow-y-auto hidden">
+                                <!-- سيتم تعبئتها ديناميكياً -->
+                            </div>
                         </div>
+
+                        <!-- تفاصيل الرمز المختار -->
+                        <div id="selectedHsInfo" class="hidden bg-blue-50 border border-blue-200 p-4 rounded-2xl space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-500">الرمز المختار:</span>
+                                <span id="infoHsCode" class="font-mono font-black text-blue-600 text-sm"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-500">الوصف:</span>
+                                <span id="infoHsDesc" class="font-bold text-slate-800 text-xs text-left"></span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 border-t border-blue-200/60">
+                                <span class="text-xs font-bold text-slate-600">نسبة الرسوم: <strong id="infoHsDuty" class="text-blue-700">0%</strong></span>
+                                <span class="text-xs font-bold text-slate-600">نسبة الضريبة: <strong id="infoHsTax" class="text-emerald-700">0%</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- قيمة البضاعة الإجمالية بالدولار -->
+                        <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">المبلغ الإجمالي بالدولار ($)</label>
+                            <div class="flex items-center">
+                                <span class="font-black text-slate-400 ml-2">$</span>
+                                <input type="text" id="goodsAmount" oninput="formatCurrency(this)" 
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900" 
+                                    placeholder="0">
+                            </div>
+                        </div>
+
+                        <!-- الكمية ووحدة القياس -->
+                        <div class="grid grid-cols-12 gap-3">
+                            <div class="col-span-7 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
+                                <label class="block text-[10px] font-black text-blue-600 mb-1">الكمية (اختياري)</label>
+                                <input type="number" id="goodsQuantity" min="0" placeholder="1" 
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900">
+                            </div>
+                            <div class="col-span-5 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
+                                <label class="block text-[10px] font-black text-blue-600 mb-1">وحدة القياس</label>
+                                <select id="goodsUnit" class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900 cursor-pointer">
+                                    <option value="عدد">عدد</option>
+                                    <option value="كغم">كغم</option>
+                                    <option value="طن">طن</option>
+                                    <option value="لتر">لتر</option>
+                                    <option value="متر">متر</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- مصاريف إضافية -->
+                        <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">مبالغ إضافية (دينار عراقي)</label>
+                            <div class="flex items-center">
+                                <span class="font-black text-slate-400 ml-2">IQD</span>
+                                <input type="text" id="goodsExtraFee" oninput="formatCurrency(this)" 
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900" 
+                                    placeholder="0">
+                            </div>
+                        </div>
+
+                        <button onclick="calculateGoodsCustoms()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
+                            <i class="fa-solid fa-calculator text-lg"></i>
+                            احسب جمرك البضاعة الآن
+                        </button>
                     </div>
 
-                    <div class="glass-panel p-6 rounded-[2.5rem] shadow-sm animate-up space-y-4">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">تفاصيل الاحتساب المباشر</h4>
-                        
-                        <div class="space-y-3 font-semibold text-sm">
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">رمز HS CODE المعني:</span>
-                                <span id="goodsResHs" class="font-mono font-black text-blue-600">-</span>
+                    <!-- عرض النتائج للبضاعة -->
+                    <div class="lg:col-span-6">
+                        <div id="goodsResultPanel" class="glass-panel p-6 rounded-[2.5rem] border-slate-200 h-full flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-sm font-black text-slate-900 border-b border-slate-200 pb-3 mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-file-invoice-dollar text-blue-600"></i>
+                                    نتيجة الاحتساب التفصيلية
+                                </h4>
+
+                                <div class="bg-slate-900 text-white p-6 rounded-3xl text-center mb-6 shadow-inner">
+                                    <span class="text-xs text-blue-400 font-bold">إجمالي التكلفة الجمركية التقديرية</span>
+                                    <h3 id="goodsFinalTotal" class="text-3xl font-black mt-2">0 <small class="text-sm">د.ع</small></h3>
+                                </div>
+
+                                <div class="space-y-3 text-sm font-bold">
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">رسم الجمرك المعتمد:</span>
+                                        <span id="goodsValDuty" class="text-slate-900">0 د.ع</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">الضريبة المعتمدة:</span>
+                                        <span id="goodsValTax" class="text-slate-900">0 د.ع</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500 text-blue-600">دعم التصدير:</span>
+                                        <span id="goodsValExport" class="text-blue-600">0 د.ع</span>
+                                    </div>
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-500">الخدمات الثابتة:</span>
+                                        <span class="text-slate-900">76,000 د.ع</span>
+                                    </div>
+                                    <div class="flex justify-between py-2">
+                                        <span class="text-slate-500">الإضافات الأخرى:</span>
+                                        <span id="goodsValExtra" class="text-slate-900">0 د.ع</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">الكمية ووحدة القياس:</span>
-                                <span id="goodsResQty" class="font-bold text-slate-800">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">قيمة البضاعة بالدينار (سعر الصرف 1320):</span>
-                                <span id="goodsResIqdVal" class="font-bold text-slate-800">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">رسم الجمرك المحسوب:</span>
-                                <span id="goodsResDuty" class="font-bold text-slate-900">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">الضريبة المحسوبة:</span>
-                                <span id="goodsResTax" class="font-bold text-slate-900">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500 text-blue-600">دعم التصدير (6.6 لكل $):</span>
-                                <span id="goodsResExport" class="font-bold text-blue-600">-</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500">الخدمات الثابتة:</span>
-                                <span class="font-bold text-slate-900">76,000 د.ع</span>
-                            </div>
-                            <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
-                                <span class="text-xs font-black text-slate-400">إضافات أخرى:</span>
-                                <span id="goodsResExtra" class="font-bold text-slate-800">-</span>
+
+                            <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+                                <p class="text-[11px] text-slate-400 font-semibold">
+                                    تم حساب هذه النتائج بناءً على بيانات التعرفة الرسمية المسجلة للبضائع.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -441,6 +479,8 @@
         <!-- ==================== القسم الثالث: قسم التعرفة الجمركية الإحصائية ==================== -->
         <div id="tariffSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
             <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
+                
+                <!-- رأس القسم -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-6 border-b border-slate-200">
                     <div>
                         <h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
@@ -451,6 +491,7 @@
                     </div>
                 </div>
 
+                <!-- شريط البحث السريع والفرز حسب الأصول الجمركية -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
                         <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" onkeyup="searchTariffTable()" placeholder="ابحث برمز H.S CODE، T.S.C CODE، المنشأ، الشركة، أو سنة الصنع..." 
@@ -462,6 +503,7 @@
                     </div>
                 </div>
 
+                <!-- جدول التعرفة الجمركية المتوافق مع الأصول الجمركية ومزودزر الحساب المباشر -->
                 <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
                     <table class="w-full text-right border-collapse" id="tariffTable">
                         <thead>
@@ -477,10 +519,13 @@
                                 <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
                             </tr>
                         </thead>
-                        <tbody id="tariffTableBody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700"></tbody>
+                        <tbody id="tariffTableBody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
+                            <!-- البيانات التفاعلية -->
+                        </tbody>
                     </table>
                 </div>
 
+                <!-- أدوات التنقل والصفحات -->
                 <div id="tariffPagination" class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-slate-200">
                     <div class="text-xs text-slate-500 font-bold" id="paginationInfo">
                         عرض <span id="showingStart" class="text-blue-600 font-black">0</span> إلى <span id="showingEnd" class="text-blue-600 font-black">0</span> من أصل <span id="showingTotal" class="text-blue-600 font-black">0</span> مادة
@@ -524,39 +569,23 @@
         let myChart = null;
         let allTariffData = [];
         let filteredTariffData = [];
-        let pricing2Data = [];
-        let selectedGoodsHsItem = null;
-
         let currentTariffPage = 1;
         const tariffPageSize = 50;
         let totalTariffPages = 1;
         let searchDebounceTimer = null;
 
-        // تحميل بيانات pricing2.json المحدث ليتوافق مع Netlify بشكل كامل
+        // متغيرات قسم البضائع
+        let allPricing2Data = [];
+        let selectedGoodsItem = null;
+
         async function loadPricing2Data() {
             try {
-                // المحاولة من الجذر أولاً
-                let res = await fetch('/pricing2.json');
-                
-                // المحاولة بالمسار النسبي إذا فشل الأول
-                if (!res.ok) {
-                    res = await fetch('./pricing2.json');
-                }
-
-                if (!res.ok) {
-                    throw new Error(`تعذر العثور على الملف (رمز الخطأ: ${res.status})`);
-                }
-
-                pricing2Data = await res.json();
-                console.log("تم تحميل pricing2.json بنجاح:", pricing2Data.length, "عنصر");
+                const response = await fetch('./pricing2.json');
+                if (!response.ok) throw new Error('فشل تحميل pricing2.json');
+                const data = await response.json();
+                allPricing2Data = Array.isArray(data) ? data : [];
             } catch (err) {
-                console.error("خطأ في تحميل pricing2.json:", err);
-                
-                if (window.location.protocol === 'file:') {
-                    alert("تنبيه: المتصفح يمنع قراءة ملف JSON محلياً (CORS Restriction).\nيرجى استخدام Live Server في VS Code.");
-                } else {
-                    alert(`فشل جلب ملف pricing2.json من Netlify.\nالتفاصيل: ${err.message}\n\nتأكد من:\n1. رفع الملف إلى GitHub بنفس اسم pricing2.json تماماً.\n2. وجود الملف في مجلد Root بجانب index.html.`);
-                }
+                console.error("خطأ في جلب ملف pricing2.json:", err);
             }
         }
 
@@ -565,10 +594,10 @@
             tbody.innerHTML = `<tr><td colspan="9" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري تحميل جدول التعرفة الجمركية...</span></div></td></tr>`;
 
             try {
-                let response = await fetch('/pricing.json');
-                if (!response.ok) response = await fetch('./pricing.json');
-                if (!response.ok) throw new Error('فشل جلب الملف');
-
+                const response = await fetch('./pricing.json');
+                if (!response.ok) {
+                    throw new Error('فشل جلب الملف');
+                }
                 const data = await response.json();
                 allTariffData = Array.isArray(data) ? data : [];
                 filteredTariffData = allTariffData;
@@ -576,13 +605,13 @@
                 renderTariffTable();
             } catch (error) {
                 console.error("خطأ في التحميل:", error);
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json. تأكد من وجوده ورَفعه بشكل صحيح.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json. تأكد من وجوده بنفس المجلد.</td></tr>`;
             }
         }
 
         function switchTab(tab) {
             const calcSec = document.getElementById('calculatorSection');
-            const goodsSec = document.getElementById('calcGoodsSection');
+            const goodsSec = document.getElementById('goodsCalcSection');
             const tariffSec = document.getElementById('tariffSection');
 
             const btnCalc = document.getElementById('tabBtnCalc');
@@ -603,12 +632,110 @@
             } else if(tab === 'goods') {
                 goodsSec.classList.remove('hidden');
                 btnGoods.classList.add('active');
-                if(pricing2Data.length === 0) loadPricing2Data();
+                if(allPricing2Data.length === 0) {
+                    loadPricing2Data();
+                }
             } else if(tab === 'tariff') {
                 tariffSec.classList.remove('hidden');
                 btnTariff.classList.add('active');
-                if(allTariffData.length === 0) loadTariffData();
+                if(allTariffData.length === 0) {
+                    loadTariffData();
+                }
             }
+        }
+
+        function filterGoodsHsCode() {
+            const query = document.getElementById('goodsHsSearch').value.trim().toLowerCase();
+            const dropdown = document.getElementById('goodsHsDropdown');
+
+            if (!query) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const matches = allPricing2Data.filter(item => {
+                const hs = (item['H.S CODE'] || item.hsCode || item.hs_code || '').toString().toLowerCase();
+                const desc = (item['الوصف'] || item.description || item.name || '').toString().toLowerCase();
+                return hs.includes(query) || desc.includes(query);
+            }).slice(0, 20);
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة</div>`;
+            } else {
+                dropdown.innerHTML = matches.map((item) => {
+                    const hs = item['H.S CODE'] || item.hsCode || item.hs_code || '-';
+                    const desc = item['الوصف'] || item.description || item.name || '-';
+                    const duty = item['الرسوم'] || item.duty || item.fee || '0%';
+                    const tax = item['الضريبة'] || item.tax || '0%';
+
+                    return `
+                        <div onclick="selectGoodsHsItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(duty)}', '${escapeHtml(tax)}')" 
+                            class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs flex justify-between items-center">
+                            <div>
+                                <span class="font-mono font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
+                                <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-500 font-bold">
+                                رسوم: ${escapeHtml(duty)} | ضريبة: ${escapeHtml(tax)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectGoodsHsItem(hs, desc, duty, tax) {
+            selectedGoodsItem = { hs, desc, duty, tax };
+            document.getElementById('goodsHsSearch').value = `${hs} - ${desc}`;
+            document.getElementById('goodsHsDropdown').classList.add('hidden');
+
+            document.getElementById('infoHsCode').innerText = hs;
+            document.getElementById('infoHsDesc').innerText = desc;
+            document.getElementById('infoHsDuty').innerText = duty;
+            document.getElementById('infoHsTax').innerText = tax;
+
+            document.getElementById('selectedHsInfo').classList.remove('hidden');
+        }
+
+        function parsePercentage(str) {
+            if (!str) return 0;
+            let val = parseFloat(str.toString().replace(/[^0-9.]/g, ''));
+            if (isNaN(val)) return 0;
+            return val / 100;
+        }
+
+        function calculateGoodsCustoms() {
+            const amount = getRaw('goodsAmount');
+            if (amount <= 0) {
+                alert('يرجى إدخال المبلغ الإجمالي بالدولار للبضاعة');
+                return;
+            }
+
+            let dutyRate = 0.15;
+            let taxRate = 0.20;
+
+            if (selectedGoodsItem) {
+                dutyRate = parsePercentage(selectedGoodsItem.duty) || 0.15;
+                taxRate = parsePercentage(selectedGoodsItem.tax) || 0.20;
+            }
+
+            const extra = getRaw('goodsExtraFee');
+
+            const baseCharge = amount * 1320 * dutyRate;
+            const refForTax = amount * 1320 * 0.15;
+            const tax = refForTax * taxRate;
+            const exportSupport = amount * 6.6;
+            const fixedService = 76000;
+
+            const finalTotal = baseCharge + tax + fixedService + exportSupport + extra;
+
+            document.getElementById('goodsFinalTotal').innerText = Math.round(finalTotal).toLocaleString('ar-EG') + " د.ع";
+            document.getElementById('goodsValDuty').innerText = Math.round(baseCharge).toLocaleString() + " د.ع (" + (dutyRate * 100) + "%)";
+            document.getElementById('goodsValTax').innerText = Math.round(tax).toLocaleString() + " د.ع (" + (taxRate * 100) + "%)";
+            document.getElementById('goodsValExport').innerText = Math.round(exportSupport).toLocaleString() + " د.ع";
+            document.getElementById('goodsValExtra').innerText = Math.round(extra).toLocaleString() + " د.ع";
         }
 
         function escapeHtml(str) {
@@ -619,114 +746,6 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
-        }
-
-        // ====== معالجة قسم احسب بضاعتك ======
-        function handleHsCodeSearch(query) {
-            const resultsBox = document.getElementById('hsSearchResults');
-            const q = query.trim().toLowerCase();
-            if(!q) {
-                resultsBox.classList.add('hidden');
-                return;
-            }
-
-            if (!pricing2Data || pricing2Data.length === 0) {
-                resultsBox.innerHTML = `
-                    <div class="p-4 text-xs font-bold text-red-500 text-center">
-                        لم يتم تحميل البيانات! 
-                        <button onclick="loadPricing2Data()" class="block mx-auto mt-2 bg-red-100 text-red-700 px-3 py-1 rounded-lg">إعادة المحاولة</button>
-                    </div>`;
-                resultsBox.classList.remove('hidden');
-                return;
-            }
-
-            const matches = pricing2Data.filter(item => {
-                const hs = (item['H.S CODE'] || item.hsCode || item.hs_code || '').toString().toLowerCase();
-                const desc = (item['الوصف'] || item.description || item.desc || '').toString().toLowerCase();
-                return hs.includes(q) || desc.includes(q);
-            }).slice(0, 15);
-
-            if(matches.length === 0) {
-                resultsBox.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 text-center">لا توجد نتائج مطابقة</div>`;
-            } else {
-                resultsBox.innerHTML = matches.map(item => {
-                    const hs = item['H.S CODE'] || item.hsCode || item.hs_code || '-';
-                    const desc = item['الوصف'] || item.description || item.desc || '-';
-                    return `
-                        <div onclick="selectHsItem('${escapeHtml(hs)}')" class="p-3 hover:bg-blue-50 cursor-pointer transition-colors text-right border-b border-slate-50 last:border-none">
-                            <div class="font-mono font-black text-xs text-blue-600">${escapeHtml(hs)}</div>
-                            <div class="text-xs text-slate-700 font-bold truncate">${escapeHtml(desc)}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
-            resultsBox.classList.remove('hidden');
-        }
-
-        function selectHsItem(hsCode) {
-            const found = pricing2Data.find(item => {
-                const hs = (item['H.S CODE'] || item.hsCode || item.hs_code || '').toString();
-                return hs === hsCode;
-            });
-
-            if(!found) return;
-
-            selectedGoodsHsItem = found;
-            document.getElementById('hsCodeSearch').value = hsCode;
-            document.getElementById('hsSearchResults').classList.add('hidden');
-
-            const hsVal = found['H.S CODE'] || found.hsCode || found.hs_code || '-';
-            const descVal = found['الوصف'] || found.description || found.desc || '-';
-            
-            // استخراج نسب الرسوم والضريبة بشكل دقيق
-            const dutyVal = parseFloat(found['الرسم'] || found.duty || found.customs || 0);
-            const taxVal = parseFloat(found['الضريبة'] || found.tax || 0);
-
-            document.getElementById('detailHsCode').innerText = hsVal;
-            document.getElementById('detailHsDesc').innerText = descVal;
-            document.getElementById('detailHsDuty').innerText = dutyVal + "%";
-            document.getElementById('detailHsTax').innerText = taxVal + "%";
-
-            document.getElementById('selectedHsDetails').classList.remove('hidden');
-        }
-
-        function calculateGoodsCustoms() {
-            if(!selectedGoodsHsItem) {
-                alert("يرجى اختيار رمز HS CODE من قائمة البحث أولاً");
-                return;
-            }
-
-            const amountDollar = getRaw('goodsAmount');
-            if(amountDollar <= 0) {
-                alert("يرجى إدخال مبلغ البضاعة الإجمالي بالدولار");
-                return;
-            }
-
-            const qty = parseFloat(document.getElementById('goodsQty').value) || 1;
-            const unit = document.getElementById('goodsUnit').value || 'عدد';
-            const extra = getRaw('goodsExtraFee');
-
-            const dutyPercent = (parseFloat(selectedGoodsHsItem['الرسم'] || selectedGoodsHsItem.duty || selectedGoodsHsItem.customs) || 0) / 100;
-            const taxPercent = (parseFloat(selectedGoodsHsItem['الضريبة'] || selectedGoodsHsItem.tax) || 0) / 100;
-
-            const amountIqd = amountDollar * 1320;
-            const dutyCalculated = amountIqd * dutyPercent;
-            const taxCalculated = amountIqd * taxPercent;
-            const exportSupport = amountDollar * 6.6;
-            const fixedService = 76000;
-
-            const total = dutyCalculated + taxCalculated + exportSupport + fixedService + extra;
-
-            const hsVal = selectedGoodsHsItem['H.S CODE'] || selectedGoodsHsItem.hsCode || selectedGoodsHsItem.hs_code || '-';
-
-            document.getElementById('goodsDisplayFinal').innerText = Math.round(total).toLocaleString('ar-EG');
-            document.getElementById('goodsResHs').innerText = hsVal;
-            document.getElementById('goodsResQty').innerText = `${qty} ${unit}`;
-            document.getElementById('goodsResIqdVal').innerText = Math.round(amountIqd).toLocaleString() + " د.ع";
-            document.getElementById('goodsResDuty').innerText = Math.round(dutyCalculated).toLocaleString() + " د.ع (" + (dutyPercent*100) + "%)";
-            document.getElementById('goodsResTax').innerText = Math.round(taxCalculated).toLocaleString() + " د.ع (" + (taxPercent*100) + "%)";
-            document.getElementById('goodsResExport').innerText = Math.round(exportSupport).toLocaleString() + " د.ع";
-            document.getElementById('goodsResExtra').innerText = Math.round(extra).toLocaleString() + " د.ع";
         }
 
         function renderTariffTable() {
@@ -812,14 +831,18 @@
             if (lastBtn) lastBtn.disabled = (page >= totalPages);
         }
 
-        function changeTariffPage(delta) { goToTariffPage(currentTariffPage + delta); }
+        function changeTariffPage(delta) {
+            goToTariffPage(currentTariffPage + delta);
+        }
 
         function goToTariffPage(targetPage) {
             if (targetPage < 1 || targetPage > totalTariffPages) return;
             currentTariffPage = targetPage;
             renderTariffTable();
             const tableEl = document.getElementById('tariffTable');
-            if (tableEl) tableEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (tableEl) {
+                tableEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function searchTariffTable() {
@@ -838,7 +861,13 @@
                         const year = (row['سنة الصنع'] || row.year || '').toString().toLowerCase();
                         const price = (row['التسعيرة'] || row.price || '').toString().toLowerCase();
 
-                        return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter) || mfr.includes(filter) || year.includes(filter) || price.includes(filter);
+                        return hs.includes(filter) ||
+                               tsc.includes(filter) ||
+                               desc.includes(filter) ||
+                               origin.includes(filter) ||
+                               mfr.includes(filter) ||
+                               year.includes(filter) ||
+                               price.includes(filter);
                     });
                 }
                 currentTariffPage = 1;
@@ -868,7 +897,6 @@
             if(code === '13420') {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
-                loadPricing2Data();
             } else {
                 error.classList.remove('hidden');
                 document.getElementById('passCode').value = '';
@@ -952,13 +980,25 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 11, weight: 'bold' }, padding: 10 } },
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { font: { family: 'Cairo', size: 11, weight: 'bold' }, padding: 10 } 
+                        },
                         tooltip: { backgroundColor: '#0f172a', padding: 12, titleFont: { family: 'Cairo' }, bodyFont: { family: 'Cairo' } }
                     },
                     cutout: '70%'
                 }
             });
         }
+
+        // إغلاق قائمة البحث عند النقر خارجها
+        document.addEventListener('click', function(e) {
+            const searchInput = document.getElementById('goodsHsSearch');
+            const dropdown = document.getElementById('goodsHsDropdown');
+            if (searchInput && dropdown && !searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
