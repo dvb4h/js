@@ -343,7 +343,6 @@
                                 <th class="p-4 border-b border-slate-800">حالة المادة</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
                                 <th class="p-4 border-b border-slate-800">التسعيرة</th>
-                                <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
                             </tr>
                         </thead>
                         <tbody id="tariffTableBody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
@@ -427,7 +426,7 @@
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -442,7 +441,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -543,41 +542,6 @@
             document.getElementById('inputTaxRate').value = cleanTaxStr;
         }
 
-        function transferHsAndPriceToCalculator(hsCode, tscCode, price) {
-            hsCode = toEnglishNumbers(hsCode);
-            tscCode = toEnglishNumbers(tscCode);
-            const cleanPriceStr = toEnglishNumbers(price).replace(/[^0-9.]/g, '');
-            if (cleanPriceStr) {
-                const mainAmtInput = document.getElementById('mainAmount');
-                mainAmtInput.value = cleanPriceStr;
-                formatCurrency(mainAmtInput);
-            }
-
-            const searchInput = document.getElementById('goodsHsSearch');
-            searchInput.value = `${hsCode} | ${tscCode}`;
-            document.getElementById('clearTariffBtn').classList.remove('hidden');
-
-            switchTab('calculator');
-
-            const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
-            const match = sourceArray.find(item => {
-                const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).trim();
-                return hs === hsCode.trim();
-            });
-
-            if (match) {
-                const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
-                const tsc = toEnglishNumbers(getField(match, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || tscCode);
-                const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
-                const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
-                selectTariffCardItem(hsCode, tsc, desc, fee, tax);
-            } else {
-                selectTariffCardItem(hsCode, tscCode, '-', '15%', '3%');
-            }
-
-            performCalculation();
-        }
-
         function clearSelectedTariff() {
             document.getElementById('goodsHsSearch').value = '';
             document.getElementById('clearTariffBtn').classList.add('hidden');
@@ -624,7 +588,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('en-US');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -640,11 +604,10 @@
             let rowsHtml = '';
             pageItems.forEach((row, index) => {
                 const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
-                // جلب الرمز حصراً باستخدام المفتاح T.S.C CODE أو البدائل المقابلة
                 const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
-                const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر', 'TSC']).toString());
+                const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
                 const cond = getItemCondition(desc);
 
@@ -662,12 +625,6 @@
                         </td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(tsc)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
-                                <i class="fa-solid fa-calculator text-[11px]"></i>
-                                <span>حساب التعرفة</span>
-                            </button>
-                        </td>
                     </tr>
                 `;
             });
