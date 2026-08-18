@@ -146,38 +146,25 @@
                                 <div id="goodsHsDropdown" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-60 overflow-y-auto hidden z-50"></div>
                             </div>
 
-                            <!-- بطاقة عرض الرمز والوصف التفصيلي وحالة المادة -->
-                            <div id="tariffInfoCard" class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col gap-3 border border-slate-800">
-                                <div class="flex items-center justify-between gap-2">
-                                    <span id="selectedHsBadge" class="bg-blue-600 text-white font-mono font-black text-sm px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
-                                        --------
-                                    </span>
-                                    <span id="selectedStatusBadge" class="bg-slate-800 text-slate-400 font-bold text-xs px-2.5 py-1 rounded-xl border border-slate-700">
-                                        الحالة: -
-                                    </span>
-                                </div>
+                            <!-- بطاقة عرض الرمز والوصف التفصيلي -->
+                            <div id="tariffInfoCard" class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border border-slate-800">
                                 <div class="text-xs font-bold text-slate-300 leading-relaxed" id="selectedDesc">
                                     حدد رمز التعرفة لاستعراض التفاصيل والنسب الجمركية
                                 </div>
+                                <span id="selectedHsBadge" class="bg-blue-600 text-white font-mono font-black text-sm px-3 py-1.5 rounded-xl whitespace-nowrap shadow-sm">
+                                    --------
+                                </span>
                             </div>
 
-                            <!-- بطاقتين قابليتن للتعديل المباشر لنسبة الرسم والضريبة -->
+                            <!-- بطاقتين لنسبة الرسم والضريبة -->
                             <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 text-center shadow-sm focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-                                    <label for="inputDutyRate" class="block text-[11px] font-black text-slate-500 mb-1 cursor-pointer">نسبة الرسم الكمركي</label>
-                                    <div class="flex items-center justify-center dir-ltr">
-                                        <span class="text-xl font-black text-blue-600">%</span>
-                                        <input type="number" id="inputDutyRate" step="0.1" value="15" 
-                                            class="w-16 text-center text-2xl font-black text-blue-600 font-mono bg-transparent border-none focus:outline-none p-0">
-                                    </div>
+                                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                                    <span class="block text-[11px] font-black text-slate-500 mb-1">نسبة الرسم الكمركي</span>
+                                    <span id="displayDutyRate" class="text-2xl font-black text-blue-600 font-mono">15%</span>
                                 </div>
-                                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 text-center shadow-sm focus-within:ring-2 focus-within:ring-amber-500 transition-all">
-                                    <label for="inputTaxRate" class="block text-[11px] font-black text-slate-500 mb-1 cursor-pointer">الأمانات الضريبية</label>
-                                    <div class="flex items-center justify-center dir-ltr">
-                                        <span class="text-xl font-black text-amber-500">%</span>
-                                        <input type="number" id="inputTaxRate" step="0.1" value="3" 
-                                            class="w-16 text-center text-2xl font-black text-amber-500 font-mono bg-transparent border-none focus:outline-none p-0">
-                                    </div>
+                                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                                    <span class="block text-[11px] font-black text-slate-500 mb-1">الأمانات الضريبية</span>
+                                    <span id="displayTaxRate" class="text-2xl font-black text-amber-500 font-mono">3%</span>
                                 </div>
                             </div>
                         </div>
@@ -204,6 +191,20 @@
                                     <option value="لتر">لتر</option>
                                     <option value="متر">متر</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <!-- تعديل نسبة الرسوم والضريبة يدوياً إن لم تُختر من جدول التعرفة -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="input-focus border border-slate-200 rounded-2xl p-3 bg-white">
+                                <label class="block text-[10px] font-black text-blue-600 mb-1">نسبة الرسوم (%)</label>
+                                <input type="number" id="inputDutyRate" step="0.1" value="15" onchange="updateRatesFromInput()"
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-base text-slate-900">
+                            </div>
+                            <div class="input-focus border border-slate-200 rounded-2xl p-3 bg-white">
+                                <label class="block text-[10px] font-black text-amber-600 mb-1">نسبة الضريبة (%)</label>
+                                <input type="number" id="inputTaxRate" step="0.1" value="3" onchange="updateRatesFromInput()"
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-base text-slate-900">
                             </div>
                         </div>
 
@@ -274,10 +275,6 @@
                         <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-2">البنود التفصيلية للرسوم</h4>
                         <div class="space-y-3">
                             <div class="flex justify-between items-center group">
-                                <span class="text-sm text-slate-500">حالة المادة:</span>
-                                <span id="valItemStatus" class="font-bold text-slate-800">-</span>
-                            </div>
-                            <div class="flex justify-between items-center group">
                                 <span class="text-sm text-slate-500">الوحدة المحددة:</span>
                                 <span id="valUnit" class="font-bold text-blue-600">عدد</span>
                             </div>
@@ -335,7 +332,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، المنشأ، المادة، أو الحالة (مستخدم/جديد)..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، المنشأ، المادة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -350,7 +347,6 @@
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b border-slate-800">HS CODE</th>
                                 <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
-                                <th class="p-4 border-b border-slate-800 text-center">الحالة</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
                                 <th class="p-4 border-b border-slate-800">التسعيرة</th>
                                 <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
@@ -406,7 +402,6 @@
         let currentTariffPage = 1;
         const tariffPageSize = 50;
         let totalTariffPages = 1;
-        let currentSelectedItemStatus = 'جديد';
 
         function getField(item, keys) {
             for (let k of keys) {
@@ -417,19 +412,10 @@
             return '';
         }
 
-        // دالة للتحقق من حالة المادة (جديد / مستخدم) بناءً على كلمة USED أو مستخدم في الوصف
-        function getItemStatus(descStr) {
-            const str = (descStr || '').toString().toUpperCase();
-            if (str.includes('USED') || str.includes('مستخدم') || str.includes('مستعمل')) {
-                return 'مستخدم';
-            }
-            return 'جديد';
-        }
-
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -444,7 +430,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -505,8 +491,6 @@
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                     const fee = getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
                     const tax = getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
-                    const status = getItemStatus(desc);
-                    const statusClass = status === 'مستخدم' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200';
 
                     return `
                         <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
@@ -515,11 +499,8 @@
                                 <span class="font-mono font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${statusClass}">${status}</span>
-                                <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg">
-                                    رسم: <span class="text-blue-600">${escapeHtml(fee)}</span> | ضريبة: <span class="text-emerald-600">${escapeHtml(tax)}</span>
-                                </div>
+                            <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg">
+                                رسم: <span class="text-blue-600">${escapeHtml(fee)}</span> | ضريبة: <span class="text-emerald-600">${escapeHtml(tax)}</span>
                             </div>
                         </div>
                     `;
@@ -537,25 +518,17 @@
             document.getElementById('selectedHsBadge').innerText = hs;
             document.getElementById('selectedDesc').innerText = desc;
             
-            const status = getItemStatus(desc);
-            currentSelectedItemStatus = status;
-            const statusBadge = document.getElementById('selectedStatusBadge');
-            
-            if (status === 'مستخدم') {
-                statusBadge.className = 'bg-amber-500/20 text-amber-400 font-bold text-xs px-2.5 py-1 rounded-xl border border-amber-500/30';
-                statusBadge.innerText = 'الحالة: مستخدم (USED)';
-            } else {
-                statusBadge.className = 'bg-emerald-500/20 text-emerald-400 font-bold text-xs px-2.5 py-1 rounded-xl border border-emerald-500/30';
-                statusBadge.innerText = 'الحالة: جديد';
-            }
-            
             const cleanFeeStr = fee.toString().replace(/[^0-9.]/g, '') || '0';
             const cleanTaxStr = tax.toString().replace(/[^0-9.]/g, '') || '0';
+
+            document.getElementById('displayDutyRate').innerText = `${cleanFeeStr}%`;
+            document.getElementById('displayTaxRate').innerText = `${cleanTaxStr}%`;
 
             document.getElementById('inputDutyRate').value = cleanFeeStr;
             document.getElementById('inputTaxRate').value = cleanTaxStr;
         }
 
+        // نقل البيانات والتبديل وإجراء الحساب فوراً تلقائياً
         function transferHsAndPriceToCalculator(hsCode, price) {
             const cleanPriceStr = price.toString().replace(/[^0-9.]/g, '');
             if (cleanPriceStr) {
@@ -585,7 +558,16 @@
                 selectTariffCardItem(hsCode, desc, fee, tax);
             }
 
+            // تنفيذ الحساب التلقائي المباشر
             performCalculation();
+        }
+
+        function updateRatesFromInput() {
+            const dutyVal = parseFloat(document.getElementById('inputDutyRate').value) || 0;
+            const taxVal = parseFloat(document.getElementById('inputTaxRate').value) || 0;
+            
+            document.getElementById('displayDutyRate').innerText = `${dutyVal}%`;
+            document.getElementById('displayTaxRate').innerText = `${taxVal}%`;
         }
 
         function clearSelectedTariff() {
@@ -593,12 +575,8 @@
             document.getElementById('clearTariffBtn').classList.add('hidden');
             document.getElementById('selectedHsBadge').innerText = '--------';
             document.getElementById('selectedDesc').innerText = 'حدد رمز التعرفة لاستعراض التفاصيل والنسب الجمركية';
-            
-            const statusBadge = document.getElementById('selectedStatusBadge');
-            statusBadge.className = 'bg-slate-800 text-slate-400 font-bold text-xs px-2.5 py-1 rounded-xl border border-slate-700';
-            statusBadge.innerText = 'الحالة: -';
-            currentSelectedItemStatus = 'جديد';
-
+            document.getElementById('displayDutyRate').innerText = '15%';
+            document.getElementById('displayTaxRate').innerText = '3%';
             document.getElementById('inputDutyRate').value = '15';
             document.getElementById('inputTaxRate').value = '3';
         }
@@ -638,7 +616,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('ar-EG');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -659,18 +637,12 @@
                 const rawPrice = getField(row, ['التسعيرة', 'price', 'السعر']).toString();
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
 
-                const status = getItemStatus(desc);
-                const statusBadge = status === 'مستخدم' 
-                    ? `<span class="bg-amber-100 text-amber-700 border border-amber-300 px-2.5 py-1 rounded-xl text-xs font-black shadow-sm">مستخدم</span>`
-                    : `<span class="bg-emerald-100 text-emerald-700 border border-emerald-300 px-2.5 py-1 rounded-xl text-xs font-black shadow-sm">جديد</span>`;
-
                 const rowBg = index % 2 === 0 ? 'bg-slate-50/50 hover:bg-blue-50/50 transition-colors' : 'bg-white hover:bg-blue-50/50 transition-colors';
 
                 rowsHtml += `
                     <tr class="${rowBg}">
                         <td class="p-4 font-mono font-black text-blue-600">${escapeHtml(hs)}</td>
                         <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
-                        <td class="p-4 text-center">${statusBadge}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 font-mono text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
@@ -727,9 +699,8 @@
                     const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
-                    const status = getItemStatus(desc).toLowerCase();
 
-                    return hs.includes(filter) || desc.includes(filter) || origin.includes(filter) || status.includes(filter);
+                    return hs.includes(filter) || desc.includes(filter) || origin.includes(filter);
                 });
             }
             currentTariffPage = 1;
@@ -791,9 +762,6 @@
             
             const finalTotal = baseCharge + taxCharge + exportSupportCharge + fixedService + extra;
 
-            document.getElementById('valItemStatus').innerText = currentSelectedItemStatus;
-            document.getElementById('valItemStatus').className = currentSelectedItemStatus === 'مستخدم' ? 'font-bold text-amber-600' : 'font-bold text-emerald-600';
-            
             document.getElementById('valUnit').innerText = selectedUnit;
             document.getElementById('displayFinal').innerText = Math.round(finalTotal).toLocaleString('ar-EG');
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString() + " د.ع";
