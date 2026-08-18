@@ -309,6 +309,7 @@
                                 <th class="p-4 border-b">T.S.C CODE</th>
                                 <th class="p-4 border-b">المنشأ</th>
                                 <th class="p-4 border-b">الوصف</th>
+                                <th class="p-4 border-b text-center">حالة البضاعة</th>
                                 <th class="p-4 border-b">الشركة المصنعة</th>
                                 <th class="p-4 border-b">التسعيرة</th>
                                 <th class="p-4 border-b">سنة الصنع</th>
@@ -529,7 +530,7 @@
             document.getElementById('totalItemsCount').innerText = filteredTariffData.length;
             
             if(filteredTariffData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات مطابقة</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات مطابقة</td></tr>`;
                 document.getElementById('pageIndicator').innerText = `الصفحة 0 من 0`;
                 return;
             }
@@ -553,12 +554,19 @@
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
                 const year = (row['سنة الصنع'] || row.year || '').toString().trim() || '-';
 
+                // التحقق تلقائياً من وجود كلمة USED لتحديد الحالة وعرضها في الجدول
+                const isUsed = desc.toUpperCase().includes('USED');
+                const conditionBadge = isUsed 
+                    ? `<span class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-amber-100 text-amber-700">مستخدم (Used)</span>` 
+                    : `<span class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-emerald-100 text-emerald-700">جديد (New)</span>`;
+
                 html += `
                     <tr class="${index % 2 === 0 ? 'bg-slate-50' : 'bg-white'} hover:bg-blue-50 transition-colors">
                         <td class="p-4 font-black text-blue-600">${hs}</td>
                         <td class="p-4 text-xs font-bold text-purple-600">${tsc}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${origin}</td>
                         <td class="p-4 font-bold text-slate-900">${desc}</td>
+                        <td class="p-4 text-center">${conditionBadge}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${brand}</td>
                         <td class="p-4 text-xs font-black text-slate-700">${displayPrice}</td>
                         <td class="p-4 font-bold text-slate-700">${year}</td>
@@ -584,7 +592,6 @@
             document.getElementById('tariffSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // فحص حالة البضاعة بناءً على وجود كلمة USED في الوصف
         function checkItemCondition(description) {
             const badge = document.getElementById('itemConditionBadge');
             if (description && description.toUpperCase().includes('USED')) {
@@ -596,17 +603,12 @@
             }
         }
 
-        // عند الضغط على حساب التعرفة: انتقال HS CODE، الفحص التلقائي للاستخدام، جلب الرسوم والتسعيرة
         function transferToCalculator(hsCode, rawPrice, description) {
             switchTab('calculator');
             
-            // 1. انتقال رمز HS CODE فقط إلى مربع البحث
             document.getElementById('searchHsInput').value = hsCode;
-            
-            // 2. التحقق من حالة الوصف (جديد أو مستخدم)
             checkItemCondition(description);
             
-            // 3. جلب وتعبئة نسبة الرسوم والضريبة تلقائياً من pricing2.json
             const found = pricing2Data.find(item => {
                 for (let key of Object.keys(item)) {
                     if (key.toLowerCase().includes('hs') || key.toLowerCase().includes('رمز')) {
@@ -627,7 +629,6 @@
                 document.getElementById('autoTaxPercent').value = tax;
             }
 
-            // 4. انتقال التسعيرة وتطبيقها تلقائياً في حقل المبلغ بالدولار
             if (rawPrice && rawPrice !== '-') {
                 let cleanPrice = rawPrice.replace(/[^0-9.]/g, '');
                 if (!isNaN(cleanPrice) && cleanPrice !== '') {
@@ -637,7 +638,6 @@
                 document.getElementById('mainAmount').value = '';
             }
 
-            // تنفيذ الحساب فوراً
             performCalculation();
         }
 
