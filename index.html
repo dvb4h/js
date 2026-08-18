@@ -160,11 +160,11 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
                                     <span class="block text-[11px] font-black text-slate-500 mb-1">نسبة الرسم الكمركي</span>
-                                    <span id="displayDutyRate" class="text-2xl font-black text-blue-600 font-mono">-%</span>
+                                    <span id="displayDutyRate" class="text-2xl font-black text-blue-600 font-mono">15%</span>
                                 </div>
                                 <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
                                     <span class="block text-[11px] font-black text-slate-500 mb-1">الأمانات الضريبية</span>
-                                    <span id="displayTaxRate" class="text-2xl font-black text-amber-500 font-mono">-%</span>
+                                    <span id="displayTaxRate" class="text-2xl font-black text-amber-500 font-mono">3%</span>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                                     <span class="font-black text-slate-400 ml-2">$</span>
                                     <input type="text" id="mainAmount" oninput="formatCurrency(this)" 
                                         class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900" 
-                                        placeholder="0">
+                                        placeholder="10,000">
                                 </div>
                             </div>
 
@@ -194,15 +194,18 @@
                             </div>
                         </div>
 
-                        <!-- اختيار النسبة -->
-                        <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                            <label class="block text-[10px] font-black text-blue-600 mb-1">نسبة الرسوم المقررة للعملية</label>
-                            <select id="feePercent" class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900 cursor-pointer">
-                                <option value="0.15">15% - الفئة القياسية</option>
-                                <option value="0.10">10% - الفئة المتوسطة</option>
-                                <option value="0.05">5% - الفئة المخفضة</option>
-                                <option value="0.03">3% - الفئة الخاصة</option>
-                            </select>
+                        <!-- تعديل نسبة الرسوم والضريبة يدوياً إن لم تُختر من جدول التعرفة -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="input-focus border border-slate-200 rounded-2xl p-3 bg-white">
+                                <label class="block text-[10px] font-black text-blue-600 mb-1">نسبة الرسوم (%)</label>
+                                <input type="number" id="inputDutyRate" step="0.1" value="15" onchange="updateRatesFromInput()"
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-base text-slate-900">
+                            </div>
+                            <div class="input-focus border border-slate-200 rounded-2xl p-3 bg-white">
+                                <label class="block text-[10px] font-black text-amber-600 mb-1">نسبة الضريبة (%)</label>
+                                <input type="number" id="inputTaxRate" step="0.1" value="3" onchange="updateRatesFromInput()"
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-base text-slate-900">
+                            </div>
                         </div>
 
                         <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
@@ -276,7 +279,7 @@
                                 <span id="valUnit" class="font-bold text-blue-600">عدد</span>
                             </div>
                             <div class="flex justify-between items-center group">
-                                <span class="text-sm text-slate-500">الجمرك:</span>
+                                <span class="text-sm text-slate-500">الرسم الكمركي:</span>
                                 <span id="valBase" class="font-bold text-slate-900">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
@@ -284,11 +287,11 @@
                                 <span id="valTax" class="font-bold text-slate-900">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
-                                <span class="text-sm text-slate-500 font-semibold text-blue-600">دعم التصدير:</span>
+                                <span class="text-sm text-slate-500 font-semibold text-blue-600">دعم التصدير (0.5%):</span>
                                 <span id="valExport" class="font-bold text-blue-600">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
-                                <span class="text-sm text-slate-500">خدمات ثابتة:</span>
+                                <span class="text-sm text-slate-500">أجور خدمات ثابتة:</span>
                                 <span class="font-bold text-slate-900">76,000 د.ع</span>
                             </div>
                             <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
@@ -516,30 +519,23 @@
 
             document.getElementById('selectedHsBadge').innerText = hs;
             document.getElementById('selectedDesc').innerText = desc;
-            document.getElementById('displayDutyRate').innerText = fee.includes('%') ? fee : `${fee}%`;
-            document.getElementById('displayTaxRate').innerText = tax.includes('%') ? tax : `${tax}%`;
+            
+            const cleanFeeStr = fee.toString().replace(/[^0-9.]/g, '') || '0';
+            const cleanTaxStr = tax.toString().replace(/[^0-9.]/g, '') || '0';
 
-            let numFee = parseFloat(fee.toString().replace(/[^0-9.]/g, ''));
-            if (!isNaN(numFee)) {
-                if (numFee > 1) numFee = numFee / 100;
-                const selectEl = document.getElementById('feePercent');
-                
-                let found = false;
-                for (let i = 0; i < selectEl.options.length; i++) {
-                    if (Math.abs(parseFloat(selectEl.options[i].value) - numFee) < 0.001) {
-                        selectEl.selectedIndex = i;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    const newOpt = document.createElement('option');
-                    newOpt.value = numFee;
-                    newOpt.innerText = `${(numFee * 100).toFixed(0)}% - مخصص من التعرفة`;
-                    newOpt.selected = true;
-                    selectEl.appendChild(newOpt);
-                }
-            }
+            document.getElementById('displayDutyRate').innerText = `${cleanFeeStr}%`;
+            document.getElementById('displayTaxRate').innerText = `${cleanTaxStr}%`;
+
+            document.getElementById('inputDutyRate').value = cleanFeeStr;
+            document.getElementById('inputTaxRate').value = cleanTaxStr;
+        }
+
+        function updateRatesFromInput() {
+            const dutyVal = parseFloat(document.getElementById('inputDutyRate').value) || 0;
+            const taxVal = parseFloat(document.getElementById('inputTaxRate').value) || 0;
+            
+            document.getElementById('displayDutyRate').innerText = `${dutyVal}%`;
+            document.getElementById('displayTaxRate').innerText = `${taxVal}%`;
         }
 
         function clearSelectedTariff() {
@@ -547,8 +543,10 @@
             document.getElementById('clearTariffBtn').classList.add('hidden');
             document.getElementById('selectedHsBadge').innerText = '--------';
             document.getElementById('selectedDesc').innerText = 'حدد رمز التعرفة لاستعراض التفاصيل والنسب الجمركية';
-            document.getElementById('displayDutyRate').innerText = '-%';
-            document.getElementById('displayTaxRate').innerText = '-%';
+            document.getElementById('displayDutyRate').innerText = '15%';
+            document.getElementById('displayTaxRate').innerText = '3%';
+            document.getElementById('inputDutyRate').value = '15';
+            document.getElementById('inputTaxRate').value = '3';
         }
 
         function switchTab(tab) {
@@ -715,7 +713,8 @@
             window.print();
         }
 
-        // تم تحديث الدالة لتقرأ نسبة الضريبة المعروضة وتطبقها في المعادلة تلقائياً
+        // تطبيق معادلة الحساب وفق المطلوب بدقة:
+        // المبلغ * (نسبة الرسم + نسبة الضريبة + 0.5% دعم التصدير) * 1320 + 76000 + إضافات
         function performCalculation() {
             const amount = getRaw('mainAmount');
             if(amount <= 0) {
@@ -724,36 +723,35 @@
             }
 
             const selectedUnit = document.getElementById('unitType').value;
-            const percent = parseFloat(document.getElementById('feePercent').value);
+            
+            // قراءة نسب الرسوم والضريبة من خانات الإدخال/الواجهة
+            const dutyPct = (parseFloat(document.getElementById('inputDutyRate').value) || 0) / 100;
+            const taxPct = (parseFloat(document.getElementById('inputTaxRate').value) || 0) / 100;
+            const exportPct = 0.005; // 0.5% ثابت
             const extra = getRaw('extraFee');
 
-            // استخراج نسبة الأمانات الضريبية الظاهرة بالواجهة (افتراضياً 20% إن لم تتحدد مادة)
-            let taxRatePercent = 0.20; 
-            const displayTaxText = document.getElementById('displayTaxRate').innerText;
-            let extractedTax = parseFloat(displayTaxText.replace(/[^0-9.]/g, ''));
-            if (!isNaN(extractedTax) && extractedTax > 0) {
-                taxRatePercent = extractedTax / 100;
-            }
+            const exchangeRate = 1320;
+            const fixedService = 76000;
 
-            const baseCharge = amount * 1320 * percent; 
-            const refForTax = amount * 1320 * 0.15; 
-            const tax = refForTax * taxRatePercent; // استخدام النسبة الديناميكية (مثل 1% أو 20%)
-            const exportSupport = amount * 6.6; 
-            const fixedService = 76000; 
+            // التكاليف الفرعية
+            const baseCharge = amount * dutyPct * exchangeRate; 
+            const taxCharge = amount * taxPct * exchangeRate; 
+            const exportSupportCharge = amount * exportPct * exchangeRate; 
             
-            const finalTotal = baseCharge + tax + fixedService + exportSupport + extra;
+            // المجموع النهائي
+            const finalTotal = baseCharge + taxCharge + exportSupportCharge + fixedService + extra;
 
             document.getElementById('valUnit').innerText = selectedUnit;
             document.getElementById('displayFinal').innerText = Math.round(finalTotal).toLocaleString('ar-EG');
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString() + " د.ع";
-            document.getElementById('valTax').innerText = Math.round(tax).toLocaleString() + " د.ع";
-            document.getElementById('valExport').innerText = Math.round(exportSupport).toLocaleString() + " د.ع";
+            document.getElementById('valTax').innerText = Math.round(taxCharge).toLocaleString() + " د.ع";
+            document.getElementById('valExport').innerText = Math.round(exportSupportCharge).toLocaleString() + " د.ع";
             document.getElementById('valExtra').innerText = Math.round(extra).toLocaleString() + " د.ع";
 
             const results = document.getElementById('resultsSection');
             results.classList.remove('opacity-30', 'grayscale', 'pointer-events-none');
             
-            updateChart(baseCharge, tax, exportSupport, fixedService + extra);
+            updateChart(baseCharge, taxCharge, exportSupportCharge, fixedService + extra);
         }
 
         function updateChart(base, tax, support, others) {
@@ -766,10 +764,10 @@
             myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['الجمرك', 'الضريبة', 'دعم التصدير', 'أخرى'],
+                    labels: ['الرسم الكمركي', 'الضريبة', 'دعم التصدير', 'خدمات وإضافات'],
                     datasets: [{
                         data: [base, tax, support, others],
-                        backgroundColor: ['#2563eb', '#4f46e5', '#3b82f6', '#cbd5e1'],
+                        backgroundColor: ['#2563eb', '#f59e0b', '#10b981', '#cbd5e1'],
                         borderWidth: 3,
                         borderColor: '#ffffff',
                         hoverOffset: 10
