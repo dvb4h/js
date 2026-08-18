@@ -112,7 +112,7 @@
             </div>
         </nav>
 
-        <!-- ==================== القسم الأول: حاسبة الأسيكودا (مرتبط بـ pricing2.json) ==================== -->
+        <!-- ==================== القسم الأول: حاسبة الأسيكودا ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <section class="lg:col-span-5 space-y-6 no-print">
@@ -271,7 +271,7 @@
             </section>
         </div>
 
-        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية (محسن للهواتف بـ Pagination) ==================== -->
+        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية ==================== -->
         <div id="tariffSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
             <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 pb-6 border-b border-slate-200">
@@ -313,7 +313,7 @@
                     </table>
                 </div>
 
-                <!-- أزرار التنقل بين الصفحات لتقليل ثقل الموبايل -->
+                <!-- أزرار التنقل بين الصفحات -->
                 <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-200">
                     <button onclick="changePage(-1)" id="prevPageBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50">السابق</button>
                     <span id="pageIndicator" class="text-xs font-bold text-slate-600">الصفحة 1</span>
@@ -332,7 +332,6 @@
         let pricingData = [];
         let pricing2Data = [];
         
-        // متغيرات التقسيم (Pagination) لمنع ثقل الهاتف
         let currentPage = 1;
         const rowsPerPage = 50;
         let filteredTariffData = [];
@@ -390,7 +389,6 @@
             }
         }
 
-        // جلب البيانات من pricing2.json بدقة ومطالبة مرنة للمفاتيح
         function filterPricing2Options() {
             const query = document.getElementById('searchHsInput').value.trim().toLowerCase();
             const dropdown = document.getElementById('hsDropdownResults');
@@ -401,7 +399,6 @@
             }
 
             const filtered = pricing2Data.filter(item => {
-                // فحص مرن لكافة احتمالات أسماء أعمدة ملف pricing2.json
                 const keys = Object.keys(item);
                 for (let key of keys) {
                     if (key.toLowerCase().includes('hs') || key.toLowerCase().includes('رمز')) {
@@ -521,7 +518,6 @@
             });
         }
 
-        // عرض الجدول مع استخدام التقسيم (Pagination) لتخفيف الحمل على الجوال
         function renderTariffTable() {
             const tbody = document.getElementById('tariffTableBody');
             document.getElementById('totalItemsCount').innerText = filteredTariffData.length;
@@ -561,7 +557,7 @@
                         <td class="p-4 text-xs font-black text-slate-700">${displayPrice}</td>
                         <td class="p-4 font-bold text-slate-700">${year}</td>
                         <td class="p-4 text-center">
-                            <button onclick="transferToCalculator('${hs}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                            <button onclick="transferToCalculator('${hs}', '${rawPrice}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
                                 <span>حساب التعرفة</span>
                             </button>
@@ -582,11 +578,14 @@
             document.getElementById('tariffSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function transferToCalculator(hsCode) {
+        // عند الضغط على حساب التعرفة: ينتقل HS CODE، وتجلب الرسوم والضريبة، وتنتقل التسعيرة تلقائياً
+        function transferToCalculator(hsCode, rawPrice) {
             switchTab('calculator');
-            document.getElementById('searchHsInput').value = hsCode;
-            filterPricing2Options();
             
+            // 1. انتقال رمز HS CODE فقط إلى مربع البحث
+            document.getElementById('searchHsInput').value = hsCode;
+            
+            // 2. جلب وتعبئة نسبة الرسوم والضريبة تلقائياً من pricing2.json
             const found = pricing2Data.find(item => {
                 for (let key of Object.keys(item)) {
                     if (key.toLowerCase().includes('hs') || key.toLowerCase().includes('رمز')) {
@@ -606,6 +605,18 @@
                 document.getElementById('autoFeePercent').value = fee;
                 document.getElementById('autoTaxPercent').value = tax;
             }
+
+            // 3. انتقال التسعيرة وتطبيقها تلقائياً في حقل المبلغ بالدولار
+            if (rawPrice && rawPrice !== '-') {
+                let cleanPrice = rawPrice.replace(/[^0-9.]/g, '');
+                if (!isNaN(cleanPrice) && cleanPrice !== '') {
+                    document.getElementById('mainAmount').value = Number(cleanPrice).toLocaleString('en-US');
+                }
+            } else {
+                document.getElementById('mainAmount').value = '';
+            }
+
+            // تنفيذ الحساب فوراً
             performCalculation();
         }
 
