@@ -111,7 +111,7 @@
             </div>
         </nav>
 
-        <!-- ==================== القسم الأول: حاسبة الأسيكودا ==================== -->
+        <!-- ==================== القسم الأول: حاسبة الأسيكودا (يقرأ من pricing2.json) ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- لوحة الإدخال -->
@@ -181,7 +181,7 @@
                                 </div>
                             </div>
 
-                            <!-- قائمة خيارات وحدة القياس المضافة -->
+                            <!-- وحدة القياس -->
                             <div class="col-span-5 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white flex flex-col justify-center">
                                 <label class="block text-[10px] font-black text-blue-600 mb-1">وحدة القياس</label>
                                 <select id="unitType" class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900 cursor-pointer">
@@ -313,7 +313,7 @@
             </section>
         </div>
 
-        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية الإحصائية ==================== -->
+        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية (يقرأ من pricing.json حصراً) ==================== -->
         <div id="tariffSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
             <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
                 
@@ -323,7 +323,7 @@
                             <i class="fa-solid fa-table-list text-blue-600 text-3xl"></i>
                             جدول التعرفة الجمركية المعتمدة
                         </h3>
-                        <p class="text-xs text-slate-500 font-bold mt-1">البحث بالمعايير والأصول الجمركية الحاكمة (HS CODE, نسبة الرسوم, الضريبة, الوصف, المنشأ, التسعيرة)</p>
+                        <p class="text-xs text-slate-500 font-bold mt-1">مصدر البيانات: ملف pricing.json الخارجي الخاص بالتعرفة</p>
                     </div>
                 </div>
 
@@ -393,13 +393,17 @@
 
     <script>
         let myChart = null;
-        let allTariffData = [];
+        
+        // مصفوفتان منفصلتان تماماً لكل قسم
+        let calcData = [];          // بيانات الحاسبة (من pricing2.json)
+        let allTariffData = [];     // بيانات قسم التعرفة الجمركية (من pricing.json)
+        
         let filteredTariffData = [];
         let currentTariffPage = 1;
         const tariffPageSize = 50;
         let totalTariffPages = 1;
 
-        // دالة جلب حقول العنصر بغض النظر عن تفاوت الأسماء بالـ JSON
+        // دالة مرنة لقراءة المفاتيح بغض النظر عن الاختلاف بالسمات
         function getField(item, keys) {
             for (let k of keys) {
                 if (item && item[k] !== undefined && item[k] !== null) {
@@ -409,22 +413,16 @@
             return '';
         }
 
-        // تحميل ملف البيانات تلقائياً
-        async function loadTariffData() {
+        // 1. جلب بيانات قسم التعرفة الجمركية حصراً من pricing.json
+        async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري تحميل جدول التعرفة الجمركية...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
-                let response = await fetch('pricing2.json');
-                if (!response.ok) {
-                    response = await fetch('pricing.json');
-                }
-                
-                if (!response.ok) {
-                    throw new Error('لم يتم العثور على ملف JSON');
-                }
+                const response = await fetch('pricing.json');
+                if (!response.ok) throw new Error('تعذر تحميل ملف pricing.json الخاص بقسم التعرفة');
                 
                 const data = await response.json();
                 allTariffData = Array.isArray(data) ? data : [];
@@ -432,15 +430,29 @@
                 currentTariffPage = 1;
                 renderTariffTable();
             } catch (error) {
-                console.warn("تحذير القراءة المباشرة:", error);
+                console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing2.json تلقائياً. يرجى التأكد من وجود الملف في نفس المجلد.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
 
+        // 2. جلب بيانات البحث السريع للحاسبة حصراً من pricing2.json
+        async function loadCalcSectionData() {
+            try {
+                const response = await fetch('pricing2.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    calcData = Array.isArray(data) ? data : [];
+                }
+            } catch (error) {
+                console.warn("تحذير: تعذر تحميل pricing2.json الخاص بالحاسبة", error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            loadTariffData();
+            loadTariffSectionData(); // تحميل pricing.json لجدول التعرفة
+            loadCalcSectionData();   // تحميل pricing2.json للبحث السريع في الحاسبة
             
             document.addEventListener('click', (e) => {
                 const searchBox = document.getElementById('goodsHsSearch');
@@ -451,7 +463,7 @@
             });
         });
 
-        // دالة الفلترة السريعة للـ Dropdown
+        // دالة البحث المنسدل للحاسبة (تستهدف calcData فقط)
         function filterGoodsHsCode() {
             const query = document.getElementById('goodsHsSearch').value.trim().toLowerCase();
             const dropdown = document.getElementById('goodsHsDropdown');
@@ -461,13 +473,16 @@
                 return;
             }
 
-            if (!allTariffData || allTariffData.length === 0) {
+            // إذا لم توجد بيانات في pricing2.json، يتم استخدام بيانات pricing.json كاحتياطي لتفادي التعطيل
+            const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
+
+            if (!sourceArray || sourceArray.length === 0) {
                 dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">جاري تحميل البيانات...</div>`;
                 dropdown.classList.remove('hidden');
                 return;
             }
 
-            const matches = allTariffData.filter(item => {
+            const matches = sourceArray.filter(item => {
                 const hs = getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                 return hs.includes(query) || desc.includes(query);
@@ -500,7 +515,7 @@
             dropdown.classList.remove('hidden');
         }
 
-        // اختيار عنصر وعرضه داخل بطاقات العرض
+        // اختيار عنصر وتغذية الحاسبة
         function selectTariffCardItem(hs, desc, fee, tax) {
             document.getElementById('goodsHsSearch').value = `${hs} - ${desc}`;
             document.getElementById('goodsHsDropdown').classList.add('hidden');
@@ -572,13 +587,14 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // عرض جدول قسم التعرفة (يعتمد على allTariffData المستوردة من pricing.json)
         function renderTariffTable() {
             const tbody = document.getElementById('tariffTableBody');
             const totalCount = filteredTariffData.length;
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('ar-EG');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -656,6 +672,7 @@
             renderTariffTable();
         }
 
+        // بحث في جدول قسم التعرفة (على pricing.json)
         function searchTariffTable() {
             const filter = document.getElementById('tariffSearchInput').value.trim().toLowerCase();
             if (!filter) {
