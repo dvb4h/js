@@ -134,6 +134,12 @@
                             <div id="hsDropdownResults" class="absolute right-0 left-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto hidden z-30"></div>
                         </div>
 
+                        <!-- حالة البضاعة (جديد / مستخدم) -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center justify-between">
+                            <span class="text-[10px] font-black text-slate-500">حالة البضاعة:</span>
+                            <span id="itemConditionBadge" class="px-3 py-1 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700">جديد (New)</span>
+                        </div>
+
                         <!-- نسب الرسوم والضريبة المستخرجة تلقائياً -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3">
@@ -557,7 +563,7 @@
                         <td class="p-4 text-xs font-black text-slate-700">${displayPrice}</td>
                         <td class="p-4 font-bold text-slate-700">${year}</td>
                         <td class="p-4 text-center">
-                            <button onclick="transferToCalculator('${hs}', '${rawPrice}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                            <button onclick="transferToCalculator('${hs}', '${rawPrice}', '${desc.replace(/'/g, "\\'")}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
                                 <span>حساب التعرفة</span>
                             </button>
@@ -578,14 +584,29 @@
             document.getElementById('tariffSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // عند الضغط على حساب التعرفة: ينتقل HS CODE، وتجلب الرسوم والضريبة، وتنتقل التسعيرة تلقائياً
-        function transferToCalculator(hsCode, rawPrice) {
+        // فحص حالة البضاعة بناءً على وجود كلمة USED في الوصف
+        function checkItemCondition(description) {
+            const badge = document.getElementById('itemConditionBadge');
+            if (description && description.toUpperCase().includes('USED')) {
+                badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-amber-100 text-amber-700";
+                badge.innerText = "مستخدم (Used)";
+            } else {
+                badge.className = "px-3 py-1 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700";
+                badge.innerText = "جديد (New)";
+            }
+        }
+
+        // عند الضغط على حساب التعرفة: انتقال HS CODE، الفحص التلقائي للاستخدام، جلب الرسوم والتسعيرة
+        function transferToCalculator(hsCode, rawPrice, description) {
             switchTab('calculator');
             
             // 1. انتقال رمز HS CODE فقط إلى مربع البحث
             document.getElementById('searchHsInput').value = hsCode;
             
-            // 2. جلب وتعبئة نسبة الرسوم والضريبة تلقائياً من pricing2.json
+            // 2. التحقق من حالة الوصف (جديد أو مستخدم)
+            checkItemCondition(description);
+            
+            // 3. جلب وتعبئة نسبة الرسوم والضريبة تلقائياً من pricing2.json
             const found = pricing2Data.find(item => {
                 for (let key of Object.keys(item)) {
                     if (key.toLowerCase().includes('hs') || key.toLowerCase().includes('رمز')) {
@@ -606,7 +627,7 @@
                 document.getElementById('autoTaxPercent').value = tax;
             }
 
-            // 3. انتقال التسعيرة وتطبيقها تلقائياً في حقل المبلغ بالدولار
+            // 4. انتقال التسعيرة وتطبيقها تلقائياً في حقل المبلغ بالدولار
             if (rawPrice && rawPrice !== '-') {
                 let cleanPrice = rawPrice.replace(/[^0-9.]/g, '');
                 if (!isNaN(cleanPrice) && cleanPrice !== '') {
