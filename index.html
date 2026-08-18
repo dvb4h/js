@@ -128,7 +128,7 @@
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-black text-slate-800 flex items-center gap-2">
                                     <i class="fa-solid fa-circle-info text-blue-600"></i>
-                                    رمز التعريفة الجمركية (HS Code)
+                                    رمز التعرفة والـ TSC CODE
                                 </label>
                             </div>
 
@@ -136,7 +136,7 @@
                                 <div class="input-focus border border-slate-200 rounded-2xl p-3.5 bg-white flex items-center justify-between">
                                     <input type="text" id="goodsHsSearch" oninput="filterGoodsHsCode()" 
                                         class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900" 
-                                        placeholder="ابحث برمز HS Code أو وصف المادة...">
+                                        placeholder="ابحث برمز HS، أو TSC Code، أو وصف المادة...">
                                     <button type="button" onclick="clearSelectedTariff()" id="clearTariffBtn" class="text-slate-400 hover:text-red-500 hidden mr-2">
                                         <i class="fa-solid fa-xmark text-lg"></i>
                                     </button>
@@ -145,9 +145,12 @@
                             </div>
 
                             <div id="tariffInfoCard" class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col gap-3 border border-slate-800">
-                                <div class="flex items-center justify-between gap-2">
-                                    <span id="selectedHsBadge" class="bg-blue-600 text-white en-num font-black text-sm px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
-                                        --------
+                                <div class="flex items-center justify-between gap-2 flex-wrap">
+                                    <span id="selectedHsBadge" class="bg-blue-600 text-white en-num font-black text-xs px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
+                                        HS: --------
+                                    </span>
+                                    <span id="selectedTscBadge" class="bg-amber-600 text-white en-num font-black text-xs px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
+                                        TSC: --------
                                     </span>
                                 </div>
                                 <div class="text-xs font-bold text-slate-300 leading-relaxed" id="selectedDesc">
@@ -321,7 +324,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، المنشأ، أو المادة..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS، أو TSC Code، المنشأ، أو المادة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -335,6 +338,7 @@
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b border-slate-800">HS CODE</th>
+                                <th class="p-4 border-b border-slate-800">TSC CODE</th>
                                 <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
                                 <th class="p-4 border-b border-slate-800">حالة المادة</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
@@ -399,7 +403,6 @@
             return '';
         }
 
-        // دالة فحص حالة المادة لجدول التعرفة
         function getItemCondition(desc) {
             if (!desc) return 'جديد';
             const str = desc.toString().toUpperCase();
@@ -424,7 +427,7 @@
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -439,7 +442,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -488,8 +491,9 @@
 
             const matches = sourceArray.filter(item => {
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
+                const tsc = toEnglishNumbers(getField(item, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
-                return hs.includes(query) || desc.includes(query);
+                return hs.includes(query) || tsc.includes(query) || desc.includes(query);
             }).slice(0, 15);
 
             if (matches.length === 0) {
@@ -497,15 +501,17 @@
             } else {
                 dropdown.innerHTML = matches.map(item => {
                     const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
+                    const tsc = toEnglishNumbers(getField(item, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                     const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
                     const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
 
                     return `
-                        <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
+                        <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(tsc)}', '${escapeHtml(desc)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
                             class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs flex justify-between items-center transition-colors">
                             <div>
-                                <span class="en-num font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
+                                <span class="en-num font-black text-blue-600 ml-2">HS: ${escapeHtml(hs)}</span>
+                                <span class="en-num font-black text-amber-600 ml-2">TSC: ${escapeHtml(tsc)}</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
                             </div>
                             <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg en-num">
@@ -519,13 +525,15 @@
             dropdown.classList.remove('hidden');
         }
 
-        function selectTariffCardItem(hs, desc, fee, tax) {
+        function selectTariffCardItem(hs, tsc, desc, fee, tax) {
             hs = toEnglishNumbers(hs);
-            document.getElementById('goodsHsSearch').value = `${hs} - ${desc}`;
+            tsc = toEnglishNumbers(tsc);
+            document.getElementById('goodsHsSearch').value = `${hs} | ${tsc} - ${desc}`;
             document.getElementById('goodsHsDropdown').classList.add('hidden');
             document.getElementById('clearTariffBtn').classList.remove('hidden');
 
-            document.getElementById('selectedHsBadge').innerText = hs;
+            document.getElementById('selectedHsBadge').innerText = `HS: ${hs}`;
+            document.getElementById('selectedTscBadge').innerText = `TSC: ${tsc}`;
             document.getElementById('selectedDesc').innerText = desc;
 
             const cleanFeeStr = toEnglishNumbers(fee).replace(/[^0-9.]/g, '') || '0';
@@ -535,8 +543,9 @@
             document.getElementById('inputTaxRate').value = cleanTaxStr;
         }
 
-        function transferHsAndPriceToCalculator(hsCode, price) {
+        function transferHsAndPriceToCalculator(hsCode, tscCode, price) {
             hsCode = toEnglishNumbers(hsCode);
+            tscCode = toEnglishNumbers(tscCode);
             const cleanPriceStr = toEnglishNumbers(price).replace(/[^0-9.]/g, '');
             if (cleanPriceStr) {
                 const mainAmtInput = document.getElementById('mainAmount');
@@ -545,13 +554,11 @@
             }
 
             const searchInput = document.getElementById('goodsHsSearch');
-            searchInput.value = hsCode;
+            searchInput.value = `${hsCode} | ${tscCode}`;
             document.getElementById('clearTariffBtn').classList.remove('hidden');
 
             switchTab('calculator');
 
-            filterGoodsHsCode();
-            
             const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
             const match = sourceArray.find(item => {
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).trim();
@@ -560,9 +567,12 @@
 
             if (match) {
                 const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                const tsc = toEnglishNumbers(getField(match, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || tscCode);
                 const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
                 const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
-                selectTariffCardItem(hsCode, desc, fee, tax);
+                selectTariffCardItem(hsCode, tsc, desc, fee, tax);
+            } else {
+                selectTariffCardItem(hsCode, tscCode, '-', '15%', '3%');
             }
 
             performCalculation();
@@ -571,7 +581,8 @@
         function clearSelectedTariff() {
             document.getElementById('goodsHsSearch').value = '';
             document.getElementById('clearTariffBtn').classList.add('hidden');
-            document.getElementById('selectedHsBadge').innerText = '--------';
+            document.getElementById('selectedHsBadge').innerText = 'HS: --------';
+            document.getElementById('selectedTscBadge').innerText = 'TSC: --------';
             document.getElementById('selectedDesc').innerText = 'حدد رمز التعرفة لاستعراض التفاصيل والنسب الجمركية';
 
             document.getElementById('inputDutyRate').value = '15';
@@ -613,7 +624,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('en-US');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -629,9 +640,10 @@
             let rowsHtml = '';
             pageItems.forEach((row, index) => {
                 const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
+                const tsc = toEnglishNumbers(getField(row, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
-                const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
+                const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر', 'TSC']).toString());
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
                 const cond = getItemCondition(desc);
 
@@ -640,6 +652,7 @@
                 rowsHtml += `
                     <tr class="${rowBg}">
                         <td class="p-4 en-num font-black text-blue-600">${escapeHtml(hs)}</td>
+                        <td class="p-4 en-num font-black text-amber-600">${escapeHtml(tsc)}</td>
                         <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-black ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
@@ -649,7 +662,7 @@
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
-                            <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                            <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(tsc)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
                                 <span>حساب التعرفة</span>
                             </button>
@@ -700,10 +713,11 @@
             } else {
                 filteredTariffData = allTariffData.filter(row => {
                     const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
+                    const tsc = toEnglishNumbers(getField(row, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
 
-                    return hs.includes(filter) || desc.includes(filter) || origin.includes(filter);
+                    return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter);
                 });
             }
             currentTariffPage = 1;
