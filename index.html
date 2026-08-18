@@ -128,7 +128,7 @@
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-black text-slate-800 flex items-center gap-2">
                                     <i class="fa-solid fa-circle-info text-blue-600"></i>
-                                    رمز التعرفة والـ TSC CODE
+                                    رمز التعرفة والـ T.S.C CODE
                                 </label>
                             </div>
 
@@ -136,7 +136,7 @@
                                 <div class="input-focus border border-slate-200 rounded-2xl p-3.5 bg-white flex items-center justify-between">
                                     <input type="text" id="goodsHsSearch" oninput="filterGoodsHsCode()" 
                                         class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900" 
-                                        placeholder="ابحث برمز HS، أو TSC Code، أو وصف المادة...">
+                                        placeholder="ابحث برمز HS، أو T.S.C CODE، أو وصف المادة...">
                                     <button type="button" onclick="clearSelectedTariff()" id="clearTariffBtn" class="text-slate-400 hover:text-red-500 hidden mr-2">
                                         <i class="fa-solid fa-xmark text-lg"></i>
                                     </button>
@@ -324,7 +324,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS، أو TSC Code، المنشأ، أو المادة..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS، أو T.S.C CODE، المنشأ، أو المادة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -338,7 +338,7 @@
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b border-slate-800">HS CODE</th>
-                                <th class="p-4 border-b border-slate-800">TSC CODE</th>
+                                <th class="p-4 border-b border-slate-800">T.S.C CODE</th>
                                 <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
                                 <th class="p-4 border-b border-slate-800">حالة المادة</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
@@ -491,7 +491,7 @@
 
             const matches = sourceArray.filter(item => {
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
-                const tsc = toEnglishNumbers(getField(item, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
+                const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                 return hs.includes(query) || tsc.includes(query) || desc.includes(query);
             }).slice(0, 15);
@@ -501,7 +501,7 @@
             } else {
                 dropdown.innerHTML = matches.map(item => {
                     const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
-                    const tsc = toEnglishNumbers(getField(item, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
+                    const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                     const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
                     const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
@@ -511,7 +511,7 @@
                             class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs flex justify-between items-center transition-colors">
                             <div>
                                 <span class="en-num font-black text-blue-600 ml-2">HS: ${escapeHtml(hs)}</span>
-                                <span class="en-num font-black text-amber-600 ml-2">TSC: ${escapeHtml(tsc)}</span>
+                                <span class="en-num font-black text-amber-600 ml-2">T.S.C: ${escapeHtml(tsc)}</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
                             </div>
                             <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg en-num">
@@ -567,7 +567,7 @@
 
             if (match) {
                 const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
-                const tsc = toEnglishNumbers(getField(match, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || tscCode);
+                const tsc = toEnglishNumbers(getField(match, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || tscCode);
                 const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
                 const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
                 selectTariffCardItem(hsCode, tsc, desc, fee, tax);
@@ -640,7 +640,8 @@
             let rowsHtml = '';
             pageItems.forEach((row, index) => {
                 const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
-                const tsc = toEnglishNumbers(getField(row, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
+                // جلب الرمز حصراً باستخدام المفتاح T.S.C CODE أو البدائل المقابلة
+                const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
                 const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر', 'TSC']).toString());
@@ -713,7 +714,7 @@
             } else {
                 filteredTariffData = allTariffData.filter(row => {
                     const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
-                    const tsc = toEnglishNumbers(getField(row, ['TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
+                    const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
 
@@ -731,7 +732,7 @@
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
             } else {
-                error.classList.add('hidden');
+                error.classList.remove('hidden');
                 document.getElementById('passCode').value = '';
                 document.getElementById('passCode').focus();
             }
@@ -742,15 +743,6 @@
             if(!isNaN(val) && val !== '') {
                 input.value = Number(val).toLocaleString('en-US');
             }
-        }
-
-        function getField(item, keys) {
-            for (let k of keys) {
-                if (item && item[k] !== undefined && item[k] !== null) {
-                    return item[k];
-                }
-            }
-            return '';
         }
 
         function getRaw(id) {
@@ -789,7 +781,7 @@
             
             const finalTotal = baseCharge + taxCharge + exportSupportCharge + fixedService + extra;
 
-            document.getElementById('valUnit').innerText, selectedUnit;
+            document.getElementById('valUnit').innerText = selectedUnit;
 
             document.getElementById('displayFinal').innerHTML = `${Math.round(finalTotal).toLocaleString('en-US')} <small class="text-xl font-bold opacity-50 font-sans">د.ع</small>`;
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString('en-US') + " د.ع";
