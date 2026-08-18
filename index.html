@@ -112,30 +112,29 @@
             </div>
         </nav>
 
-        <!-- ==================== القسم الأول: حاسبة الأسيكودا المحدثة ==================== -->
+        <!-- ==================== القسم الأول: حاسبة الأسيكودا (مرتبط بـ pricing2.json) ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <section class="lg:col-span-5 space-y-6 no-print">
                 <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white relative overflow-hidden hover-float">
                     <div class="mb-6">
                         <h3 class="text-xl font-black text-slate-900">حاسبة ASYCUDA الذكية</h3>
-                        <p class="text-sm text-slate-500 mt-1">حساب دقيق للرسوم والضرائب عبر ملف pricing2.json</p>
+                        <p class="text-sm text-slate-500 mt-1">الربط التلقائي مع ملف pricing2.json</p>
                     </div>
 
                     <div class="space-y-4">
-                        <!-- مربع البحث عن HS Code وجلب البيانات -->
+                        <!-- مربع البحث وجلب بيانات pricing2.json -->
                         <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white relative">
-                            <label class="block text-[10px] font-black text-blue-600 mb-1">ابحث أو أدخل H.S CODE</label>
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">ابحث برمز H.S CODE أو الوصف (pricing2)</label>
                             <div class="flex items-center">
-                                <input type="text" id="searchHsInput" oninput="filterPricing2Options()" placeholder="اكتب رمز H.S CODE أو الوصف..." 
+                                <input type="text" id="searchHsInput" oninput="filterPricing2Options()" placeholder="اكتب للبحث..." 
                                     class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900">
                                 <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
                             </div>
-                            <!-- قائمة منسدلة للنتائج المطابقة -->
                             <div id="hsDropdownResults" class="absolute right-0 left-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto hidden z-30"></div>
                         </div>
 
-                        <!-- الحقول المستخرجة تلقائياً من pricing2.json -->
+                        <!-- نسب الرسوم والضريبة المستخرجة تلقائياً -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3">
                                 <span class="block text-[10px] font-black text-slate-500 mb-1">نسبة الرسوم</span>
@@ -151,7 +150,7 @@
                         <div class="grid grid-cols-12 gap-3">
                             <div class="col-span-7 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
                                 <label class="block text-[10px] font-black text-blue-600 mb-1">الكمية (اختياري)</label>
-                                <input type="number" id="itemQuantity" min="1" value="1" oninput="formatCurrency(this)" 
+                                <input type="number" id="itemQuantity" min="1" value="1" oninput="formatCurrency(this); performCalculation();" 
                                     class="w-full bg-transparent border-none focus:outline-none font-bold text-md text-slate-900" placeholder="1">
                             </div>
                             <div class="col-span-5 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
@@ -166,12 +165,12 @@
                             </div>
                         </div>
 
-                        <!-- المبلغ الإجمالي الأساسي بالدولار -->
+                        <!-- مبلغ الجمرك بالدولار -->
                         <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                            <label class="block text-[10px] font-black text-blue-600 mb-1">قيمة الجمرك الإجمالية ($)</label>
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">قيمة الجمرك بالدولار ($)</label>
                             <div class="flex items-center">
                                 <span class="font-black text-slate-400 ml-2">$</span>
-                                <input type="text" id="mainAmount" oninput="formatCurrency(this)" 
+                                <input type="text" id="mainAmount" oninput="formatCurrency(this); performCalculation();" 
                                     class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900" 
                                     placeholder="10,000">
                             </div>
@@ -182,7 +181,7 @@
                             <label class="block text-[10px] font-black text-blue-600 mb-1">مبالغ إضافية أخرى (دينار عراقي)</label>
                             <div class="flex items-center">
                                 <span class="font-black text-slate-400 ml-2">IQD</span>
-                                <input type="text" id="extraFee" oninput="formatCurrency(this)" 
+                                <input type="text" id="extraFee" oninput="formatCurrency(this); performCalculation();" 
                                     class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900" 
                                     placeholder="0">
                             </div>
@@ -190,18 +189,17 @@
 
                         <button onclick="performCalculation()" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-black py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95 group">
                             <i class="fa-solid fa-calculator group-hover:rotate-12 transition-transform"></i>
-                            إصدار الفاتورة التجارية الدقيقة
+                            إصدار الفاتورة التجارية
                         </button>
                     </div>
 
-                    <!-- مركز الاستعلامات -->
                     <div class="mt-8 pt-6 border-t border-slate-100 whatsapp-section">
                         <div class="bg-emerald-50 rounded-3xl p-4 border border-emerald-100">
                             <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-2">
                                 <i class="fa-solid fa-headset"></i>
                                 مركز الاستعلامات الجمركية
                             </h4>
-                            <a href="https://wa.me/9647750500007?text=السلام%20عليكم%20حسين%20الحمد،%20أريد%20الاستعلام%20بشأن%20تعرفة%20جمركية" target="_blank" 
+                            <a href="https://wa.me/9647750500007?text=السلام%20عليكم%20حسين%20الحمد" target="_blank" 
                                class="whatsapp-pulse flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-2xl font-bold transition-all shadow-lg text-xs">
                                 <i class="fa-brands fa-whatsapp text-lg"></i>
                                 <span>07750500007</span>
@@ -211,7 +209,7 @@
                 </div>
             </section>
 
-            <!-- لوحة النتائج والفاتورة التجارية -->
+            <!-- لوحة النتائج والفاتورة -->
             <section id="resultsSection" class="lg:col-span-7 space-y-6 opacity-30 grayscale pointer-events-none transition-all duration-1000">
                 
                 <div class="invoice-print-only invoice-box-print">
@@ -231,7 +229,7 @@
 
                 <div class="result-card p-1 rounded-[3rem] shadow-2xl animate-up hover-float">
                     <div class="bg-white/5 rounded-[2.9rem] p-8 text-center text-white relative overflow-hidden">
-                        <span class="text-blue-400 text-xs font-black uppercase tracking-[0.2em] relative z-10">إجمالي المبلغ المستحق للدفع (مع الثابت 76,000)</span>
+                        <span class="text-blue-400 text-xs font-black uppercase tracking-[0.2em] relative z-10">إجمالي المبلغ المستحق للدفع (شامل 76,000 ثابت)</span>
                         <h3 id="displayFinal" class="text-4xl md:text-5xl font-black mt-3 tracking-tighter relative z-10">0.00 <small class="text-xl font-bold opacity-50">د.ع</small></h3>
                     </div>
                 </div>
@@ -273,22 +271,22 @@
             </section>
         </div>
 
-        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية ==================== -->
+        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية (مرتبط بـ pricing.json) ==================== -->
         <div id="tariffSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
             <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 pb-6 border-b border-slate-200">
                     <div>
                         <h3 class="text-2xl font-black text-slate-900 flex items-center gap-3">
                             <i class="fa-solid fa-table-list text-blue-600 text-3xl"></i>
-                            جدول التعرفة الجمركية (Pricing2)
+                            جدول التعرفة الجمركية (Pricing)
                         </h3>
-                        <p class="text-xs text-slate-500 font-bold mt-1">البحث في ملف pricing2.json المخصص للرسوم والضرائب</p>
+                        <p class="text-xs text-slate-500 font-bold mt-1">البحث في ملف pricing.json الأساسي</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز H.S CODE أو الوصف..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث بررمز H.S CODE، الوصف، أو المنشأ..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -302,10 +300,12 @@
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b">H.S CODE</th>
+                                <th class="p-4 border-b">T.S.C CODE</th>
+                                <th class="p-4 border-b">المنشأ</th>
                                 <th class="p-4 border-b">الوصف</th>
-                                <th class="p-4 border-b">نسبة الرسوم</th>
-                                <th class="p-4 border-b">نسبة الضريبة</th>
+                                <th class="p-4 border-b">الشركة المصنعة</th>
                                 <th class="p-4 border-b">التسعيرة</th>
+                                <th class="p-4 border-b">سنة الصنع</th>
                                 <th class="p-4 border-b text-center">الإجراء</th>
                             </tr>
                         </thead>
@@ -322,21 +322,29 @@
 
     <script>
         let myChart = null;
+        let pricingData = [];
         let pricing2Data = [];
 
-        // تحميل ملف pricing2.json تلقائياً عند فتح الصفحة
-        async function loadPricing2() {
+        // تحميل الملفين عند تشغيل التطبيق
+        async function loadAllData() {
             try {
-                const response = await fetch('./pricing2.json');
-                if (!response.ok) throw new Error('فشل جلب الملف');
-                const data = await response.json();
-                pricing2Data = Array.isArray(data) ? data : [];
-                renderTariffTable(pricing2Data);
-            } catch (error) {
-                console.error("خطأ في جلب pricing2.json:", error);
-            }
+                const res1 = await fetch('./pricing.json');
+                if(res1.ok) {
+                    const data1 = await res1.json();
+                    pricingData = Array.isArray(data1) ? data1 : [];
+                    renderTariffTable(pricingData);
+                }
+            } catch (e) { console.error("خطأ في تحميل pricing.json", e); }
+
+            try {
+                const res2 = await fetch('./pricing2.json');
+                if(res2.ok) {
+                    const data2 = await res2.json();
+                    pricing2Data = Array.isArray(data2) ? data2 : [];
+                }
+            } catch (e) { console.error("خطأ في تحميل pricing2.json", e); }
         }
-        window.addEventListener('DOMContentLoaded', loadPricing2);
+        window.addEventListener('DOMContentLoaded', loadAllData);
 
         function verifyAccess() {
             const code = document.getElementById('passCode').value;
@@ -370,7 +378,7 @@
             }
         }
 
-        // البحث التفاعلي في حاسبة الأسيكودا عبر pricing2.json
+        // البحث في pricing2.json للحاسبة
         function filterPricing2Options() {
             const query = document.getElementById('searchHsInput').value.trim().toLowerCase();
             const dropdown = document.getElementById('hsDropdownResults');
@@ -434,24 +442,22 @@
             return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
         }
 
-        // تنفيذ المعادلة الدقيقة المطلوبة
+        // المعادلة الدقيقة المطابقة لمثالك
         function performCalculation() {
             let amount = getRaw('mainAmount');
             const qty = getRaw('itemQuantity') || 1;
-            amount = amount * qty; // دعم الكمية الإجمالية
+            amount = amount * qty;
 
             if(amount <= 0) return;
 
-            // استخراج النسبة وتخليصها كأرقام عشرية
             const feeStr = document.getElementById('autoFeePercent').value.replace('%', '');
             const taxStr = document.getElementById('autoTaxPercent').value.replace('%', '');
             
             const feeRate = parseFloat(feeStr) / 100 || 0.15;
             const taxRate = parseFloat(taxStr) / 100 || 0.03;
             const exportSupportRate = 0.005; // 0.5% ثابت
-            const exchangeRate = 1320; // سعر الصرف ثابت
+            const exchangeRate = 1320; // سعر الصرف
 
-            // المعادلة: 10000 * 18.5% * 1320 = 2,442,000 + 76000 = 2,518,000[cite: 9]
             const baseCharge = amount * exchangeRate * feeRate; 
             const tax = amount * exchangeRate * taxRate; 
             const exportSupport = amount * exchangeRate * exportSupportRate; 
@@ -460,7 +466,6 @@
             
             const finalTotal = baseCharge + tax + exportSupport + fixedService + extra;
 
-            // عرض النتائج
             document.getElementById('displayFinal').innerText = Math.round(finalTotal).toLocaleString('ar-EG');
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString() + " د.ع";
             document.getElementById('valTax').innerText = Math.round(tax).toLocaleString() + " د.ع";
@@ -500,30 +505,39 @@
             });
         }
 
+        // عرض بيانات pricing.json في جدول التعرفة الجمركية
         function renderTariffTable(data) {
             const tbody = document.getElementById('tariffTableBody');
             document.getElementById('totalItemsCount').innerText = data.length;
             if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات مطابقة في pricing2.json</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات في pricing.json</td></tr>`;
                 return;
             }
             let html = '';
-            data.forEach((item, index) => {
-                const hs = item['H.S CODE'] || item.hsCode || '-';
-                const desc = item['الوصف'] || item.description || '-';
-                const fee = item['الرسوم'] || item.fee || '15%';
-                const tax = item['الضريبة'] || item.tax || '3%';
-                const price = item['التسعيرة'] || item.price || '-';
+            data.forEach((row, index) => {
+                const hs = (row['H.S CODE'] || row.hsCode || '').trim() || '-';
+                const tsc = (row['T.S.C CODE'] || row.tscCode || '').trim() || '-';
+                const origin = (row['المنشأ'] || row.origin || '').trim() || '-';
+                const desc = (row['الوصف'] || row.description || '').trim() || '-';
+                const brand = (row['الشركة المصنعة'] || row.manufacturer || '').trim() || '-';
+                const rawPrice = (row['التسعيرة'] || row.price || '').toString().trim();
+                const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
+                const year = (row['سنة الصنع'] || row.year || '').toString().trim() || '-';
 
                 html += `
-                    <tr class="${index % 2 === 0 ? 'bg-slate-50' : 'bg-white'} hover:bg-blue-50">
+                    <tr class="${index % 2 === 0 ? 'bg-slate-50' : 'bg-white'} hover:bg-blue-50 transition-colors">
                         <td class="p-4 font-black text-blue-600">${hs}</td>
+                        <td class="p-4 text-xs font-bold text-purple-600">${tsc}</td>
+                        <td class="p-4 text-xs font-bold text-slate-700">${origin}</td>
                         <td class="p-4 font-bold text-slate-900">${desc}</td>
-                        <td class="p-4 font-bold text-slate-700">${fee}</td>
-                        <td class="p-4 font-bold text-purple-600">${tax}</td>
-                        <td class="p-4 font-bold text-emerald-600">${price}</td>
+                        <td class="p-4 text-xs font-bold text-slate-700">${brand}</td>
+                        <td class="p-4 text-xs font-black text-slate-700">${displayPrice}</td>
+                        <td class="p-4 font-bold text-slate-700">${year}</td>
                         <td class="p-4 text-center">
-                            <button onclick="selectHsItem('${hs}', '${fee}', '${tax}', '${price}'); switchTab('calculator');" class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-md">اختر للحساب</button>
+                            <button onclick="transferToCalculatorFromPricing('${hs}', '${rawPrice}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                                <i class="fa-solid fa-calculator text-[11px]"></i>
+                                <span>حساب التعرفة</span>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -531,12 +545,24 @@
             tbody.innerHTML = html;
         }
 
+        function transferToCalculatorFromPricing(hsCode, priceVal) {
+            switchTab('calculator');
+            document.getElementById('searchHsInput').value = hsCode;
+            filterPricing2Options();
+            let numericVal = priceVal.replace(/[^0-9.]/g, '');
+            if(numericVal) {
+                document.getElementById('mainAmount').value = Number(numericVal).toLocaleString('en-US');
+            }
+            performCalculation();
+        }
+
         function searchTariffTable() {
             const query = document.getElementById('tariffSearchInput').value.toLowerCase();
-            const filtered = pricing2Data.filter(item => {
-                const hs = (item['H.S CODE'] || item.hsCode || '').toLowerCase();
-                const desc = (item['الوصف'] || item.description || '').toLowerCase();
-                return hs.includes(query) || desc.includes(query);
+            const filtered = pricingData.filter(row => {
+                const hs = (row['H.S CODE'] || row.hsCode || '').toLowerCase();
+                const desc = (row['الوصف'] || row.description || '').toLowerCase();
+                const origin = (row['المنشأ'] || row.origin || '').toLowerCase();
+                return hs.includes(query) || desc.includes(query) || origin.includes(query);
             });
             renderTariffTable(filtered);
         }
