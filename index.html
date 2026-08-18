@@ -528,7 +528,7 @@
             document.getElementById('inputTaxRate').value = cleanTaxStr;
         }
 
-        // الوظيفة المحدثة لنقل الـ HS CODE والتسعيرة والتنقل لقسم الحاسبة
+        // نقل البيانات والتبديل وإجراء الحساب فوراً تلقائياً
         function transferHsAndPriceToCalculator(hsCode, price) {
             const cleanPriceStr = price.toString().replace(/[^0-9.]/g, '');
             if (cleanPriceStr) {
@@ -557,6 +557,9 @@
                 const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
                 selectTariffCardItem(hsCode, desc, fee, tax);
             }
+
+            // تنفيذ الحساب التلقائي المباشر
+            performCalculation();
         }
 
         function updateRatesFromInput() {
