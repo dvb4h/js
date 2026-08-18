@@ -334,15 +334,16 @@
                 </div>
 
                 <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
-                    <table class="w-full text-right border-collapse" id="tariffTable">
+                    <table class="w-full text-right border-collapse table-fixed" id="tariffTable">
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
-                                <th class="p-4 border-b border-slate-800">HS CODE</th>
-                                <th class="p-4 border-b border-slate-800">T.S.C CODE</th>
-                                <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
-                                <th class="p-4 border-b border-slate-800">حالة المادة</th>
-                                <th class="p-4 border-b border-slate-800">المنشأ</th>
-                                <th class="p-4 border-b border-slate-800">التسعيرة</th>
+                                <th class="p-4 border-b border-slate-800 w-[14%]">HS CODE</th>
+                                <th class="p-4 border-b border-slate-800 w-[12%]">T.S.C CODE</th>
+                                <th class="p-4 border-b border-slate-800 w-[30%]">الوصف التفصيلي</th>
+                                <th class="p-4 border-b border-slate-800 w-[11%]">حالة المادة</th>
+                                <th class="p-4 border-b border-slate-800 w-[10%]">سنة الصنع</th>
+                                <th class="p-4 border-b border-slate-800 w-[11%]">المنشأ</th>
+                                <th class="p-4 border-b border-slate-800 w-[12%]">التسعيرة</th>
                             </tr>
                         </thead>
                         <tbody id="tariffTableBody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
@@ -426,7 +427,7 @@
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -441,7 +442,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -588,7 +589,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('en-US');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -607,6 +608,7 @@
                 const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
+                const year = toEnglishNumbers(getField(row, ['سنة الصنع', 'year', 'سنة_الصنع', 'موديل', 'model']) || '-');
                 const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
                 const cond = getItemCondition(desc);
@@ -615,16 +617,17 @@
 
                 rowsHtml += `
                     <tr class="${rowBg}">
-                        <td class="p-4 en-num font-black text-blue-600">${escapeHtml(hs)}</td>
-                        <td class="p-4 en-num font-black text-amber-600">${escapeHtml(tsc)}</td>
-                        <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
-                        <td class="p-4">
+                        <td class="p-4 en-num font-black text-blue-600 truncate">${escapeHtml(hs)}</td>
+                        <td class="p-4 en-num font-black text-amber-600 truncate">${escapeHtml(tsc)}</td>
+                        <td class="p-4 font-bold text-slate-900 truncate" title="${escapeHtml(desc)}">${escapeHtml(desc)}</td>
+                        <td class="p-4 truncate">
                             <span class="px-2.5 py-1 rounded-full text-xs font-black ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
                                 ${cond}
                             </span>
                         </td>
-                        <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
-                        <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
+                        <td class="p-4 en-num text-xs font-bold text-slate-700 truncate">${escapeHtml(year)}</td>
+                        <td class="p-4 text-xs font-bold text-slate-700 truncate">${escapeHtml(origin)}</td>
+                        <td class="p-4 en-num text-xs font-black text-slate-700 truncate">${escapeHtml(displayPrice)}</td>
                     </tr>
                 `;
             });
@@ -674,8 +677,9 @@
                     const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'TSC', 'tscCode', 'الرمز الإحصائي'])).toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
+                    const year = toEnglishNumbers(getField(row, ['سنة الصنع', 'year', 'سنة_الصنع', 'موديل', 'model'])).toLowerCase();
 
-                    return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter);
+                    return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter) || year.includes(filter);
                 });
             }
             currentTariffPage = 1;
