@@ -232,7 +232,7 @@
                                 مركز الاستعلامات الجمركية
                             </h4>
                             <p class="text-[11px] text-emerald-800 leading-relaxed font-medium mb-4">
-                                للأستعلام بشأن تعرفة معينه تواصل مع قسم الأسيكودا والتعرفه الجمركية مباشرة.
+                                للأستعلام بشأن تعرفة معينه تواصل مع قسم الأسيكودا والتعرفه الجمركية مباشرة[cite: 1].
                             </p>
                             <a href="https://wa.me/9647750500007?text=السلام%20عليكم%20حسين%20الحمد،%20أريد%20الاستعلام%20بشأن%20تعرفة%20جمركية" target="_blank" 
                                class="whatsapp-pulse flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-3.5 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 en-num">
@@ -330,7 +330,7 @@
                             <i class="fa-solid fa-table-list text-blue-600 text-3xl"></i>
                             جدول التعرفة الجمركية المعتمدة
                         </h3>
-                        <p class="text-xs text-slate-500 font-bold mt-1">مصدر البيانات: ملف pricing.json الخارجي الخاص بالتعرفة</p>
+                        <p class="text-xs text-slate-500 font-bold mt-1">مصدر البيانات: ملف pricing.json الخارجي (مربوط عبر GitHub و Netlify)</p>
                     </div>
                 </div>
 
@@ -456,7 +456,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية. تأكد من وضعه في المجلد الرئيسي لمشروع Netlify/GitHub.</td></tr>`;
                 }
             }
         }
@@ -469,7 +469,7 @@
                     calcData = Array.isArray(data) ? data : [];
                 }
             } catch (error) {
-                console.warn("تحذير: تعذر تحميل pricing2.json الخاص بالحاسبة", error);
+                console.warn("تحذير: تعذر تحميل pricing2.json الخاص بالحاسبة، سيتم الاعتماد على pricing.json", error);
             }
         }
 
@@ -522,8 +522,8 @@
                     const brand = getField(item, ['الشركة المصنعة', 'brand', 'الشركة', 'manufacturer']) || '-';
                     const origin = getField(item, ['المنشأ', 'origin']) || '-';
                     const year = toEnglishNumbers(getField(item, ['سنة الصنع', 'year', 'الصنع']) || '-');
-                    const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
-                    const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
+                    const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '15%');
+                    const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '3%');
                     const cond = getItemCondition(desc);
 
                     return `
@@ -567,8 +567,8 @@
                 ? 'bg-amber-900/40 text-amber-300 font-bold text-xs px-2.5 py-1 rounded-lg border border-amber-700/50' 
                 : 'bg-slate-800 text-slate-300 font-bold text-xs px-2.5 py-1 rounded-lg border border-slate-700';
 
-            const cleanFeeStr = toEnglishNumbers(fee).replace(/[^0-9.]/g, '') || '0';
-            const cleanTaxStr = toEnglishNumbers(tax).replace(/[^0-9.]/g, '') || '0';
+            const cleanFeeStr = toEnglishNumbers(fee).replace(/[^0-9.]/g, '') || '15';
+            const cleanTaxStr = toEnglishNumbers(tax).replace(/[^0-9.]/g, '') || '3';
 
             document.getElementById('inputDutyRate').value = cleanFeeStr;
             document.getElementById('inputTaxRate').value = cleanTaxStr;
@@ -588,10 +588,8 @@
             document.getElementById('clearTariffBtn').classList.remove('hidden');
 
             switchTab('calculator');
-
-            filterGoodsHsCode();
             
-            const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
+            const sourceArray = (allTariffData && allTariffData.length > 0) ? allTariffData : calcData;
             const match = sourceArray.find(item => {
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).trim();
                 return hs === hsCode.trim();
@@ -601,8 +599,8 @@
                 const tsc = getField(match, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-';
                 const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const year = getField(match, ['سنة الصنع', 'year', 'الصنع']) || '-';
-                const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
-                const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
+                const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '15%';
+                const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '3%';
                 selectTariffCardItem(hsCode, tsc, desc, year, fee, tax);
             }
 
@@ -822,7 +820,7 @@
 
             document.getElementById('displayFinal').innerHTML = `${Math.round(finalTotal).toLocaleString('en-US')} <small class="text-xl font-bold opacity-50 font-sans">د.ع</small>`;
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString('en-US') + " د.ع";
-            document.getElementById('valTax').innerText = Math.round(taxCharge).toLocaleString('en-US') + " د.ع";
+            document.getElementById('valTax').innerText = Math.round(taxCharge).toLocaleString('en-US") + " د.ع";
             document.getElementById('valExport').innerText = Math.round(exportSupportCharge).toLocaleString('en-US') + " د.ع";
             document.getElementById('valExtra').innerText = Math.round(extra).toLocaleString('en-US') + " د.ع";
 
