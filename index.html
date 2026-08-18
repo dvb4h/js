@@ -336,7 +336,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، T.S.C CODE، المنشأ، أو المادة..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، T.S.C CODE، المنشأ، الوصف، أو الشركة المصنعة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -349,13 +349,13 @@
                     <table class="w-full text-right border-collapse" id="tariffTable">
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
-                                <th class="p-4 border-b border-slate-800">HS CODE</th>
+                                <th class="p-4 border-b border-slate-800">H.S CODE</th>
                                 <th class="p-4 border-b border-slate-800">T.S.C CODE</th>
-                                <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
-                                <th class="p-4 border-b border-slate-800">حالة المادة</th>
-                                <th class="p-4 border-b border-slate-800">سنة الصنع</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
+                                <th class="p-4 border-b border-slate-800">الوصف</th>
+                                <th class="p-4 border-b border-slate-800">الشركة المصنعة</th>
                                 <th class="p-4 border-b border-slate-800">التسعيرة</th>
+                                <th class="p-4 border-b border-slate-800">سنة الصنع</th>
                                 <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
                             </tr>
                         </thead>
@@ -507,7 +507,9 @@
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
                 const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'tsc'])).toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
-                return hs.includes(query) || tsc.includes(query) || desc.includes(query);
+                const brand = getField(item, ['الشركة المصنعة', 'brand', 'الشركة', 'manufacturer']).toString().toLowerCase();
+                const origin = getField(item, ['المنشأ', 'origin']).toString().toLowerCase();
+                return hs.includes(query) || tsc.includes(query) || desc.includes(query) || brand.includes(query) || origin.includes(query);
             }).slice(0, 15);
 
             if (matches.length === 0) {
@@ -517,6 +519,8 @@
                     const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
                     const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-');
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                    const brand = getField(item, ['الشركة المصنعة', 'brand', 'الشركة', 'manufacturer']) || '-';
+                    const origin = getField(item, ['المنشأ', 'origin']) || '-';
                     const year = toEnglishNumbers(getField(item, ['سنة الصنع', 'year', 'الصنع']) || '-');
                     const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
                     const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
@@ -529,13 +533,11 @@
                                 <span class="en-num font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
                                 <span class="en-num font-black text-purple-600 ml-2">[${escapeHtml(tsc)}]</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
+                                <span class="text-slate-500 mr-2">(${escapeHtml(brand)} / ${escapeHtml(origin)})</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 en-num">صنع: ${escapeHtml(year)}</span>
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">${cond}</span>
-                                <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg en-num">
-                                    رسم: <span class="text-blue-600">${escapeHtml(fee)}</span> | ضريبة: <span class="text-emerald-600">${escapeHtml(tax)}</span>
-                                </div>
                             </div>
                         </div>
                     `;
@@ -674,12 +676,12 @@
             pageItems.forEach((row, index) => {
                 const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
                 const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-');
-                const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
-                const year = toEnglishNumbers(getField(row, ['سنة الصنع', 'year', 'الصنع']) || '-');
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
+                const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                const brand = getField(row, ['الشركة المصنعة', 'brand', 'الشركة', 'manufacturer']) || '-';
                 const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
-                const cond = getItemCondition(desc);
+                const year = toEnglishNumbers(getField(row, ['سنة الصنع', 'year', 'الصنع']) || '-');
 
                 const rowBg = index % 2 === 0 ? 'bg-slate-50/50 hover:bg-blue-50/50 transition-colors' : 'bg-white hover:bg-blue-50/50 transition-colors';
 
@@ -687,15 +689,11 @@
                     <tr class="${rowBg}">
                         <td class="p-4 en-num font-black text-blue-600">${escapeHtml(hs)}</td>
                         <td class="p-4 en-num font-black text-purple-600">${escapeHtml(tsc)}</td>
-                        <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
-                        <td class="p-4">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-black ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
-                                ${cond}
-                            </span>
-                        </td>
-                        <td class="p-4 en-num font-bold text-slate-700">${escapeHtml(year)}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
+                        <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
+                        <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(brand)}</td>
                         <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
+                        <td class="p-4 en-num font-bold text-slate-700">${escapeHtml(year)}</td>
                         <td class="p-4 text-center">
                             <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
@@ -749,10 +747,11 @@
                 filteredTariffData = allTariffData.filter(row => {
                     const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
                     const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'tsc'])).toLowerCase();
-                    const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
+                    const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
+                    const brand = getField(row, ['الشركة المصنعة', 'brand', 'الشركة', 'manufacturer']).toString().toLowerCase();
 
-                    return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter);
+                    return hs.includes(filter) || tsc.includes(filter) || origin.includes(filter) || desc.includes(filter) || brand.includes(filter);
                 });
             }
             currentTariffPage = 1;
@@ -869,4 +868,3 @@
     </script>
 </body>
 </html>
-```[cite: 6]
