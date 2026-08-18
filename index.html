@@ -731,7 +731,7 @@
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
             } else {
-                error.classList.remove('hidden');
+                error.classList.add('hidden');
                 document.getElementById('passCode').value = '';
                 document.getElementById('passCode').focus();
             }
@@ -742,6 +742,15 @@
             if(!isNaN(val) && val !== '') {
                 input.value = Number(val).toLocaleString('en-US');
             }
+        }
+
+        function getField(item, keys) {
+            for (let k of keys) {
+                if (item && item[k] !== undefined && item[k] !== null) {
+                    return item[k];
+                }
+            }
+            return '';
         }
 
         function getRaw(id) {
@@ -780,7 +789,7 @@
             
             const finalTotal = baseCharge + taxCharge + exportSupportCharge + fixedService + extra;
 
-            document.getElementById('valUnit').innerText = selectedUnit;
+            document.getElementById('valUnit').innerText, selectedUnit;
 
             document.getElementById('displayFinal').innerHTML = `${Math.round(finalTotal).toLocaleString('en-US')} <small class="text-xl font-bold opacity-50 font-sans">د.ع</small>`;
             document.getElementById('valBase').innerText = Math.round(baseCharge).toLocaleString('en-US') + " د.ع";
