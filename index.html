@@ -332,7 +332,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، نسبة الرسوم، الضريبة، المنشأ..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، المنشأ، المادة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -347,8 +347,6 @@
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b border-slate-800">HS CODE</th>
                                 <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
-                                <th class="p-4 border-b border-slate-800 text-center">نسبة الرسوم</th>
-                                <th class="p-4 border-b border-slate-800 text-center">الضريبة</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
                                 <th class="p-4 border-b border-slate-800">التسعيرة</th>
                                 <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
@@ -417,7 +415,7 @@
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -432,7 +430,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -584,7 +582,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('ar-EG');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -601,8 +599,8 @@
             pageItems.forEach((row, index) => {
                 const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-';
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
-                const feeRate = getField(row, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '-';
-                const taxRate = getField(row, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '-';
+                const feeRate = getField(row, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
+                const taxRate = getField(row, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
                 const rawPrice = getField(row, ['التسعيرة', 'price', 'السعر']).toString();
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
@@ -613,8 +611,6 @@
                     <tr class="${rowBg}">
                         <td class="p-4 font-mono font-black text-blue-600">${escapeHtml(hs)}</td>
                         <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
-                        <td class="p-4 text-center font-black text-blue-600">${escapeHtml(feeRate)}</td>
-                        <td class="p-4 text-center font-black text-emerald-600">${escapeHtml(taxRate)}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 font-mono text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
@@ -670,11 +666,9 @@
                 filteredTariffData = allTariffData.filter(row => {
                     const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
-                    const fee = getField(row, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']).toString().toLowerCase();
-                    const tax = getField(row, ['الضريبة', 'tax', 'الأمانات الضريبية']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
 
-                    return hs.includes(filter) || desc.includes(filter) || fee.includes(filter) || tax.includes(filter) || origin.includes(filter);
+                    return hs.includes(filter) || desc.includes(filter) || origin.includes(filter);
                 });
             }
             currentTariffPage = 1;
@@ -713,8 +707,6 @@
             window.print();
         }
 
-        // تطبيق معادلة الحساب وفق المطلوب بدقة:
-        // المبلغ * (نسبة الرسم + نسبة الضريبة + 0.5% دعم التصدير) * 1320 + 76000 + إضافات
         function performCalculation() {
             const amount = getRaw('mainAmount');
             if(amount <= 0) {
@@ -724,21 +716,18 @@
 
             const selectedUnit = document.getElementById('unitType').value;
             
-            // قراءة نسب الرسوم والضريبة من خانات الإدخال/الواجهة
             const dutyPct = (parseFloat(document.getElementById('inputDutyRate').value) || 0) / 100;
             const taxPct = (parseFloat(document.getElementById('inputTaxRate').value) || 0) / 100;
-            const exportPct = 0.005; // 0.5% ثابت
+            const exportPct = 0.005;
             const extra = getRaw('extraFee');
 
             const exchangeRate = 1320;
             const fixedService = 76000;
 
-            // التكاليف الفرعية
             const baseCharge = amount * dutyPct * exchangeRate; 
             const taxCharge = amount * taxPct * exchangeRate; 
             const exportSupportCharge = amount * exportPct * exchangeRate; 
             
-            // المجموع النهائي
             const finalTotal = baseCharge + taxCharge + exportSupportCharge + fixedService + extra;
 
             document.getElementById('valUnit').innerText = selectedUnit;
