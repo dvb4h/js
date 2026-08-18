@@ -112,36 +112,36 @@
             </div>
         </nav>
 
-        <!-- ==================== القسم الأول: حاسبة الأسيكودا (مرتبط بـ pricing2.json) ==================== -->
+        <!-- ==================== القسم الأول: حاسبة الأسيكودا (مربوط بـ pricing2.json) ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <section class="lg:col-span-5 space-y-6 no-print">
                 <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white relative overflow-hidden hover-float">
                     <div class="mb-6">
                         <h3 class="text-xl font-black text-slate-900">حاسبة ASYCUDA الذكية</h3>
-                        <p class="text-sm text-slate-500 mt-1">الربط التلقائي مع ملف pricing2.json</p>
+                        <p class="text-sm text-slate-500 mt-1">جلب البيانات من ملف pricing2.json (HS CODE, نسبة الرسوم, الضريبة)</p>
                     </div>
 
                     <div class="space-y-4">
-                        <!-- مربع البحث وجلب بيانات pricing2.json -->
+                        <!-- مربع البحث وجلب البيانات من pricing2.json -->
                         <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white relative">
-                            <label class="block text-[10px] font-black text-blue-600 mb-1">ابحث برمز H.S CODE أو الوصف (pricing2)</label>
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">ابحث برمز HS CODE (من ملف pricing2)</label>
                             <div class="flex items-center">
-                                <input type="text" id="searchHsInput" oninput="filterPricing2Options()" placeholder="اكتب للبحث..." 
+                                <input type="text" id="searchHsInput" oninput="filterPricing2Options()" placeholder="اكتب رمز HS CODE للبحث..." 
                                     class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900">
                                 <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
                             </div>
                             <div id="hsDropdownResults" class="absolute right-0 left-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto hidden z-30"></div>
                         </div>
 
-                        <!-- نسب الرسوم والضريبة المستخرجة تلقائياً -->
+                        <!-- نسب الرسوم والضريبة المستخرجة تلقائياً من pricing2.json -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3">
                                 <span class="block text-[10px] font-black text-slate-500 mb-1">نسبة الرسوم</span>
                                 <input type="text" id="autoFeePercent" readonly class="w-full bg-transparent font-black text-blue-600 text-sm focus:outline-none" value="15%">
                             </div>
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3">
-                                <span class="block text-[10px] font-black text-slate-500 mb-1">نسبة الضريبة</span>
+                                <span class="block text-[10px] font-black text-slate-500 mb-1">الضريبة</span>
                                 <input type="text" id="autoTaxPercent" readonly class="w-full bg-transparent font-black text-purple-600 text-sm focus:outline-none" value="3%">
                             </div>
                         </div>
@@ -167,7 +167,7 @@
 
                         <!-- مبلغ الجمرك بالدولار -->
                         <div class="input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
-                            <label class="block text-[10px] font-black text-blue-600 mb-1">قيمة الجمرك بالدولار ($)</label>
+                            <label class="block text-[10px] font-black text-blue-600 mb-1">قيمة البضاعة بالدولار ($)</label>
                             <div class="flex items-center">
                                 <span class="font-black text-slate-400 ml-2">$</span>
                                 <input type="text" id="mainAmount" oninput="formatCurrency(this); performCalculation();" 
@@ -271,7 +271,7 @@
             </section>
         </div>
 
-        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية (مرتبط بـ pricing.json) ==================== -->
+        <!-- ==================== القسم الثاني: قسم التعرفة الجمركية (مربوط بـ pricing.json) ==================== -->
         <div id="tariffSection" class="max-w-6xl mx-auto px-4 py-8 hidden animate-up">
             <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 pb-6 border-b border-slate-200">
@@ -286,7 +286,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث بررمز H.S CODE، الوصف، أو المنشأ..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث بررمز HS CODE، الوصف، أو المنشأ..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -299,7 +299,7 @@
                     <table class="w-full text-right border-collapse" id="tariffTable">
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
-                                <th class="p-4 border-b">H.S CODE</th>
+                                <th class="p-4 border-b">HS CODE</th>
                                 <th class="p-4 border-b">T.S.C CODE</th>
                                 <th class="p-4 border-b">المنشأ</th>
                                 <th class="p-4 border-b">الوصف</th>
@@ -325,7 +325,7 @@
         let pricingData = [];
         let pricing2Data = [];
 
-        // تحميل الملفين عند تشغيل التطبيق
+        // تحميل الملفين عند تشغيل التطبيق من المجلد الرئيسي (GitHub / Netlify)
         async function loadAllData() {
             try {
                 const res1 = await fetch('./pricing.json');
@@ -378,7 +378,7 @@
             }
         }
 
-        // البحث في pricing2.json للحاسبة
+        // جلب البيانات حصرياً من pricing2.json (يحتوي على: HS CODE, نسبة الرسوم, الضريبة)
         function filterPricing2Options() {
             const query = document.getElementById('searchHsInput').value.trim().toLowerCase();
             const dropdown = document.getElementById('hsDropdownResults');
@@ -389,29 +389,26 @@
             }
 
             const filtered = pricing2Data.filter(item => {
-                const hs = (item['H.S CODE'] || item.hsCode || '').toString().toLowerCase();
-                const desc = (item['الوصف'] || item.description || '').toString().toLowerCase();
-                return hs.includes(query) || desc.includes(query);
+                const hs = (item['HS CODE'] || item['H.S CODE'] || item.hsCode || '').toString().toLowerCase();
+                return hs.includes(query);
             });
 
             if(filtered.length === 0) {
-                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة</div>`;
+                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة في pricing2.json</div>`;
                 dropdown.classList.remove('hidden');
                 return;
             }
 
             let html = '';
             filtered.forEach(item => {
-                const hs = item['H.S CODE'] || item.hsCode || '';
-                const desc = item['الوصف'] || item.description || '';
-                const fee = item['الرسوم'] || item.fee || '15%';
+                const hs = item['HS CODE'] || item['H.S CODE'] || item.hsCode || '';
+                const fee = item['نسبة الرسوم'] || item['الرسوم'] || item.fee || '15%';
                 const tax = item['الضريبة'] || item.tax || '3%';
-                const price = item['التسعيرة'] || item.price || '';
 
                 html += `
-                    <div onclick="selectHsItem('${hs}', '${fee}', '${tax}', '${price}')" class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs">
-                        <div class="font-black text-blue-600">${hs} - ${desc}</div>
-                        <div class="text-[10px] text-slate-500 mt-1">الرسوم: ${fee} | الضريبة: ${tax}</div>
+                    <div onclick="selectPricing2Item('${hs}', '${fee}', '${tax}')" class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs">
+                        <div class="font-black text-blue-600">HS CODE: ${hs}</div>
+                        <div class="text-[10px] text-slate-500 mt-1">نسبة الرسوم: ${fee} | الضريبة: ${tax}</div>
                     </div>
                 `;
             });
@@ -420,13 +417,10 @@
             dropdown.classList.remove('hidden');
         }
 
-        function selectHsItem(hs, fee, tax, price) {
+        function selectPricing2Item(hs, fee, tax) {
             document.getElementById('searchHsInput').value = hs;
             document.getElementById('autoFeePercent').value = fee;
             document.getElementById('autoTaxPercent').value = tax;
-            if(price) {
-                document.getElementById('mainAmount').value = price.toString().replace(/[^0-9.]/g, '');
-            }
             document.getElementById('hsDropdownResults').classList.add('hidden');
             performCalculation();
         }
@@ -442,7 +436,7 @@
             return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
         }
 
-        // المعادلة الدقيقة المطابقة لمثالك
+        // المعادلة الدقيقة لحاسبة الأسيكودا
         function performCalculation() {
             let amount = getRaw('mainAmount');
             const qty = getRaw('itemQuantity') || 1;
@@ -455,13 +449,13 @@
             
             const feeRate = parseFloat(feeStr) / 100 || 0.15;
             const taxRate = parseFloat(taxStr) / 100 || 0.03;
-            const exportSupportRate = 0.005; // 0.5% ثابت
+            const exportSupportRate = 0.005; // 0.5% ثابت دعم التصدير
             const exchangeRate = 1320; // سعر الصرف
 
             const baseCharge = amount * exchangeRate * feeRate; 
             const tax = amount * exchangeRate * taxRate; 
             const exportSupport = amount * exchangeRate * exportSupportRate; 
-            const fixedService = 76000; // ثابت
+            const fixedService = 76000; // المبلغ الثابت
             const extra = getRaw('extraFee');
             
             const finalTotal = baseCharge + tax + exportSupport + fixedService + extra;
@@ -515,7 +509,7 @@
             }
             let html = '';
             data.forEach((row, index) => {
-                const hs = (row['H.S CODE'] || row.hsCode || '').trim() || '-';
+                const hs = (row['HS CODE'] || row['H.S CODE'] || row.hsCode || '').trim() || '-';
                 const tsc = (row['T.S.C CODE'] || row.tscCode || '').trim() || '-';
                 const origin = (row['المنشأ'] || row.origin || '').trim() || '-';
                 const desc = (row['الوصف'] || row.description || '').trim() || '-';
@@ -534,7 +528,7 @@
                         <td class="p-4 text-xs font-black text-slate-700">${displayPrice}</td>
                         <td class="p-4 font-bold text-slate-700">${year}</td>
                         <td class="p-4 text-center">
-                            <button onclick="transferToCalculatorFromPricing('${hs}', '${rawPrice}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                            <button onclick="transferToCalculator('${hs}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
                                 <span>حساب التعرفة</span>
                             </button>
@@ -545,13 +539,17 @@
             tbody.innerHTML = html;
         }
 
-        function transferToCalculatorFromPricing(hsCode, priceVal) {
+        function transferToCalculator(hsCode) {
             switchTab('calculator');
             document.getElementById('searchHsInput').value = hsCode;
             filterPricing2Options();
-            let numericVal = priceVal.replace(/[^0-9.]/g, '');
-            if(numericVal) {
-                document.getElementById('mainAmount').value = Number(numericVal).toLocaleString('en-US');
+            // البحث المطابق في pricing2 لجلب الرسوم والضريبة تلقائياً عند النقل
+            const found = pricing2Data.find(item => (item['HS CODE'] || item['H.S CODE'] || '').toString().trim() === hsCode.trim());
+            if(found) {
+                const fee = found['نسبة الرسوم'] || found['الرسوم'] || '15%';
+                const tax = found['الضريبة'] || '3%';
+                document.getElementById('autoFeePercent').value = fee;
+                document.getElementById('autoTaxPercent').value = tax;
             }
             performCalculation();
         }
@@ -559,7 +557,7 @@
         function searchTariffTable() {
             const query = document.getElementById('tariffSearchInput').value.toLowerCase();
             const filtered = pricingData.filter(row => {
-                const hs = (row['H.S CODE'] || row.hsCode || '').toLowerCase();
+                const hs = (row['HS CODE'] || row['H.S CODE'] || row.hsCode || '').toLowerCase();
                 const desc = (row['الوصف'] || row.description || '').toLowerCase();
                 const origin = (row['المنشأ'] || row.origin || '').toLowerCase();
                 return hs.includes(query) || desc.includes(query) || origin.includes(query);
