@@ -146,9 +146,17 @@
 
                             <div id="tariffInfoCard" class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col gap-3 border border-slate-800">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span id="selectedHsBadge" class="bg-blue-600 text-white en-num font-black text-sm px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
+                                    <span id="selectedHsBadge" class="bg-blue-600 text-white en-num font-black text-xs px-2.5 py-1 rounded-xl whitespace-nowrap shadow-sm">
                                         --------
                                     </span>
+                                    <span id="selectedTscBadge" class="bg-purple-600 text-white en-num font-black text-xs px-2.5 py-1 rounded-xl whitespace-nowrap shadow-sm" title="T.S.C CODE">
+                                        T.S.C: ---
+                                    </span>
+                                    <span id="selectedYearBadge" class="bg-slate-800 text-slate-300 font-bold text-xs px-2 py-1 rounded-lg border border-slate-700">
+                                        الصنع: ---
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
                                     <span id="selectedConditionBadge" class="bg-slate-800 text-slate-300 font-bold text-xs px-2.5 py-1 rounded-lg border border-slate-700">
                                         الحالة: جديد
                                     </span>
@@ -328,7 +336,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
                     <div class="md:col-span-8 relative">
-                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، المنشأ، أو المادة..." 
+                        <input type="text" id="tariffSearchInput" oninput="searchTariffTable()" placeholder="ابحث برمز HS CODE، T.S.C CODE، المنشأ، أو المادة..." 
                             class="w-full p-4 pr-11 bg-white border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
@@ -342,8 +350,10 @@
                         <thead>
                             <tr class="bg-slate-900 text-white text-xs font-black">
                                 <th class="p-4 border-b border-slate-800">HS CODE</th>
+                                <th class="p-4 border-b border-slate-800">T.S.C CODE</th>
                                 <th class="p-4 border-b border-slate-800">الوصف التفصيلي</th>
                                 <th class="p-4 border-b border-slate-800">حالة المادة</th>
+                                <th class="p-4 border-b border-slate-800">سنة الصنع</th>
                                 <th class="p-4 border-b border-slate-800">المنشأ</th>
                                 <th class="p-4 border-b border-slate-800">التسعيرة</th>
                                 <th class="p-4 border-b border-slate-800 text-center">الإجراء</th>
@@ -407,7 +417,6 @@
             return '';
         }
 
-        // دالة فحص حالة المادة إذا كان الوصف يحتوي على USED أو مستخدم
         function getItemCondition(desc) {
             if (!desc) return 'جديد';
             const str = desc.toString().toUpperCase();
@@ -432,7 +441,7 @@
         async function loadTariffSectionData() {
             const tbody = document.getElementById('tariffTableBody');
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-12 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center gap-3"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i><span class="text-sm">جاري جلب بيانات التعرفة من pricing.json...</span></div></td></tr>`;
             }
 
             try {
@@ -447,7 +456,7 @@
             } catch (error) {
                 console.error("خطأ في قراءة pricing.json:", error);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-red-500 font-bold">تعذر تحميل ملف pricing.json الخاص بجدول التعرفة الجمركية.</td></tr>`;
                 }
             }
         }
@@ -496,8 +505,9 @@
 
             const matches = sourceArray.filter(item => {
                 const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
+                const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'tsc'])).toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
-                return hs.includes(query) || desc.includes(query);
+                return hs.includes(query) || tsc.includes(query) || desc.includes(query);
             }).slice(0, 15);
 
             if (matches.length === 0) {
@@ -505,19 +515,23 @@
             } else {
                 dropdown.innerHTML = matches.map(item => {
                     const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
+                    const tsc = toEnglishNumbers(getField(item, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-');
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                    const year = toEnglishNumbers(getField(item, ['سنة الصنع', 'year', 'الصنع']) || '-');
                     const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
                     const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
                     const cond = getItemCondition(desc);
 
                     return `
-                        <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
+                        <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(tsc)}', '${escapeHtml(desc)}', '${escapeHtml(year)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
                             class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs flex justify-between items-center transition-colors">
                             <div>
                                 <span class="en-num font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
+                                <span class="en-num font-black text-purple-600 ml-2">[${escapeHtml(tsc)}]</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
                             </div>
                             <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 en-num">صنع: ${escapeHtml(year)}</span>
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">${cond}</span>
                                 <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg en-num">
                                     رسم: <span class="text-blue-600">${escapeHtml(fee)}</span> | ضريبة: <span class="text-emerald-600">${escapeHtml(tax)}</span>
@@ -531,13 +545,18 @@
             dropdown.classList.remove('hidden');
         }
 
-        function selectTariffCardItem(hs, desc, fee, tax) {
+        function selectTariffCardItem(hs, tsc, desc, year, fee, tax) {
             hs = toEnglishNumbers(hs);
+            tsc = toEnglishNumbers(tsc);
+            year = toEnglishNumbers(year);
+
             document.getElementById('goodsHsSearch').value = `${hs} - ${desc}`;
             document.getElementById('goodsHsDropdown').classList.add('hidden');
             document.getElementById('clearTariffBtn').classList.remove('hidden');
 
             document.getElementById('selectedHsBadge').innerText = hs;
+            document.getElementById('selectedTscBadge').innerText = `T.S.C: ${tsc || '---'}`;
+            document.getElementById('selectedYearBadge').innerText = `الصنع: ${year || '---'}`;
             document.getElementById('selectedDesc').innerText = desc;
             
             currentItemCondition = getItemCondition(desc);
@@ -577,10 +596,12 @@
             });
 
             if (match) {
+                const tsc = getField(match, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-';
                 const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                const year = getField(match, ['سنة الصنع', 'year', 'الصنع']) || '-';
                 const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
                 const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
-                selectTariffCardItem(hsCode, desc, fee, tax);
+                selectTariffCardItem(hsCode, tsc, desc, year, fee, tax);
             }
 
             performCalculation();
@@ -590,6 +611,8 @@
             document.getElementById('goodsHsSearch').value = '';
             document.getElementById('clearTariffBtn').classList.add('hidden');
             document.getElementById('selectedHsBadge').innerText = '--------';
+            document.getElementById('selectedTscBadge').innerText = 'T.S.C: ---';
+            document.getElementById('selectedYearBadge').innerText = 'الصنع: ---';
             document.getElementById('selectedDesc').innerText = 'حدد رمز التعرفة لاستعراض التفاصيل والنسب الجمركية';
             currentItemCondition = 'جديد';
             document.getElementById('selectedConditionBadge').innerText = 'الحالة: جديد';
@@ -634,7 +657,7 @@
             document.getElementById('totalItemsCount').innerText = totalCount.toLocaleString('en-US');
 
             if (totalCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center p-8 text-slate-400 font-bold">لا توجد بيانات جمركية مطابقة في ملف pricing.json.</td></tr>`;
                 updatePaginationControls(0, 0, 0, 1, 1);
                 return;
             }
@@ -650,7 +673,9 @@
             let rowsHtml = '';
             pageItems.forEach((row, index) => {
                 const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
+                const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'tsc']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                const year = toEnglishNumbers(getField(row, ['سنة الصنع', 'year', 'الصنع']) || '-');
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
                 const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
@@ -661,12 +686,14 @@
                 rowsHtml += `
                     <tr class="${rowBg}">
                         <td class="p-4 en-num font-black text-blue-600">${escapeHtml(hs)}</td>
+                        <td class="p-4 en-num font-black text-purple-600">${escapeHtml(tsc)}</td>
                         <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-black ${cond === 'مستخدم' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
                                 ${cond}
                             </span>
                         </td>
+                        <td class="p-4 en-num font-bold text-slate-700">${escapeHtml(year)}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
@@ -721,10 +748,11 @@
             } else {
                 filteredTariffData = allTariffData.filter(row => {
                     const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
+                    const tsc = toEnglishNumbers(getField(row, ['T.S.C CODE', 'TSC CODE', 'tsc'])).toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
 
-                    return hs.includes(filter) || desc.includes(filter) || origin.includes(filter);
+                    return hs.includes(filter) || tsc.includes(filter) || desc.includes(filter) || origin.includes(filter);
                 });
             }
             currentTariffPage = 1;
@@ -841,3 +869,4 @@
     </script>
 </body>
 </html>
+```[cite: 6]
