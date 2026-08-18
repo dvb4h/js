@@ -32,6 +32,9 @@
         .invoice-print-only { display: none; }
         .nav-tab.active { background-color: #2563eb; color: #ffffff; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
 
+        /* إجبار خط الأرقام الإنجليزية على خانات الأرقام والنسب */
+        .en-num { font-family: Arial, sans-serif !important; direction: ltr !important; display: inline-block; }
+
         @media print {
             @page { size: A4 portrait; margin: 10mm; }
             body { background-color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #000000 !important; }
@@ -63,7 +66,7 @@
             
             <div class="relative mb-6">
                 <input type="password" id="passCode" placeholder="أدخل رمز المرور" 
-                    class="w-full p-4 pr-12 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center tracking-[0.5em] font-bold text-lg"
+                    class="w-full p-4 pr-12 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center tracking-[0.5em] font-bold text-lg en-num"
                     onkeypress="if(event.key==='Enter') verifyAccess()">
                 <i class="fa-solid fa-key-skeleton absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
             </div>
@@ -78,7 +81,7 @@
     <!-- التطبيق الرئيسي -->
     <main id="mainApp" class="hidden min-h-screen relative pb-20">
         
-        <!-- الشريط العلوي والتنقل بين الأقسام -->
+        <!-- الشريط العلوي -->
         <nav class="bg-white/85 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-6 py-4 no-print">
             <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
@@ -91,7 +94,6 @@
                     </div>
                 </div>
 
-                <!-- أزرار التبديل بين الأقسام -->
                 <div class="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
                     <button onclick="switchTab('calculator')" id="tabBtnCalc" class="nav-tab active px-5 py-2.5 rounded-xl font-black text-xs transition-all flex items-center gap-2">
                         <i class="fa-solid fa-calculator"></i>
@@ -114,7 +116,6 @@
         <!-- ==================== القسم الأول: حاسبة الأسيكودا ==================== -->
         <div id="calculatorSection" class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- لوحة الإدخال -->
             <section class="lg:col-span-5 space-y-6 no-print">
                 <div class="glass-panel p-8 rounded-[2.5rem] shadow-xl border-white relative overflow-hidden hover-float">
                     <div class="mb-8">
@@ -124,7 +125,6 @@
 
                     <div class="space-y-5">
                         
-                        <!-- قسم البحث وعرض التعرفة الجمركية -->
                         <div class="bg-slate-50/80 p-5 rounded-3xl border border-slate-200 space-y-4">
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-black text-slate-800 flex items-center gap-2">
@@ -133,7 +133,6 @@
                                 </label>
                             </div>
 
-                            <!-- مربع البحث المنسدل -->
                             <div class="relative">
                                 <div class="input-focus border border-slate-200 rounded-2xl p-3.5 bg-white flex items-center justify-between">
                                     <input type="text" id="goodsHsSearch" oninput="filterGoodsHsCode()" 
@@ -146,10 +145,9 @@
                                 <div id="goodsHsDropdown" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 max-h-60 overflow-y-auto hidden z-50"></div>
                             </div>
 
-                            <!-- بطاقة عرض الرمز والوصف التفصيلي وحالة المادة -->
                             <div id="tariffInfoCard" class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col gap-3 border border-slate-800">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span id="selectedHsBadge" class="bg-blue-600 text-white font-mono font-black text-sm px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
+                                    <span id="selectedHsBadge" class="bg-blue-600 text-white en-num font-black text-sm px-3 py-1 rounded-xl whitespace-nowrap shadow-sm">
                                         --------
                                     </span>
                                     <span id="selectedStatusBadge" class="bg-slate-800 text-slate-400 font-bold text-xs px-2.5 py-1 rounded-xl border border-slate-700">
@@ -161,40 +159,38 @@
                                 </div>
                             </div>
 
-                            <!-- بطاقتين قابليتن للتعديل المباشر لنسبة الرسم والضريبة بأرقام إنجليزية -->
+                            <!-- نسبة الرسم والضريبة بأرقام إنجليزية (1234567890) -->
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 text-center shadow-sm focus-within:ring-2 focus-within:ring-blue-500 transition-all">
                                     <label for="inputDutyRate" class="block text-[11px] font-black text-slate-500 mb-1 cursor-pointer">نسبة الرسم الكمركي</label>
                                     <div class="flex items-center justify-center dir-ltr">
-                                        <span class="text-xl font-black text-blue-600 font-mono">%</span>
+                                        <span class="text-xl font-black text-blue-600 en-num">%</span>
                                         <input type="number" id="inputDutyRate" step="0.1" value="15" dir="ltr"
-                                            class="w-16 text-center text-2xl font-black text-blue-600 font-mono bg-transparent border-none focus:outline-none p-0">
+                                            class="w-16 text-center text-2xl font-black text-blue-600 en-num bg-transparent border-none focus:outline-none p-0">
                                     </div>
                                 </div>
                                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 text-center shadow-sm focus-within:ring-2 focus-within:ring-amber-500 transition-all">
                                     <label for="inputTaxRate" class="block text-[11px] font-black text-slate-500 mb-1 cursor-pointer">الأمانات الضريبية</label>
                                     <div class="flex items-center justify-center dir-ltr">
-                                        <span class="text-xl font-black text-amber-500 font-mono">%</span>
+                                        <span class="text-xl font-black text-amber-500 en-num">%</span>
                                         <input type="number" id="inputTaxRate" step="0.1" value="3" dir="ltr"
-                                            class="w-16 text-center text-2xl font-black text-amber-500 font-mono bg-transparent border-none focus:outline-none p-0">
+                                            class="w-16 text-center text-2xl font-black text-amber-500 en-num bg-transparent border-none focus:outline-none p-0">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- إدخال المبلغ والكمية ووحدة القياس -->
                         <div class="grid grid-cols-12 gap-3">
                             <div class="col-span-7 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white">
                                 <label class="block text-[10px] font-black text-blue-600 mb-1">المبلغ الإجمالي بالدولار ($)</label>
                                 <div class="flex items-center">
                                     <span class="font-black text-slate-400 ml-2">$</span>
                                     <input type="text" id="mainAmount" oninput="formatCurrency(this)" 
-                                        class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900 font-mono" 
-                                        placeholder="10,000">
+                                        class="w-full bg-transparent border-none focus:outline-none font-bold text-xl text-slate-900 en-num" 
+                                        placeholder="10000">
                                 </div>
                             </div>
 
-                            <!-- وحدة القياس -->
                             <div class="col-span-5 input-focus border border-slate-200 rounded-2xl p-4 transition-all bg-white flex flex-col justify-center">
                                 <label class="block text-[10px] font-black text-blue-600 mb-1">وحدة القياس</label>
                                 <select id="unitType" class="w-full bg-transparent border-none focus:outline-none font-bold text-sm text-slate-900 cursor-pointer">
@@ -212,7 +208,7 @@
                             <div class="flex items-center">
                                 <span class="font-black text-slate-400 ml-2">IQD</span>
                                 <input type="text" id="extraFee" oninput="formatCurrency(this)" 
-                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900 font-mono" 
+                                    class="w-full bg-transparent border-none focus:outline-none font-bold text-lg text-slate-900 en-num" 
                                     placeholder="0">
                             </div>
                         </div>
@@ -223,7 +219,6 @@
                         </button>
                     </div>
 
-                    <!-- قسم الاستعلامات -->
                     <div class="mt-10 pt-8 border-t border-slate-100 whatsapp-section">
                         <div class="bg-emerald-50 rounded-3xl p-5 border border-emerald-100">
                             <h4 class="text-xs font-black text-emerald-700 mb-2 flex items-center gap-2">
@@ -234,7 +229,7 @@
                                 للأستعلام بشأن تعرفة معينه تواصل مع قسم الأسيكودا والتعرفه الجمركية مباشرة.
                             </p>
                             <a href="https://wa.me/9647750500007?text=السلام%20عليكم%20حسين%20الحمد،%20أريد%20الاستعلام%20بشأن%20تعرفة%20جمركية" target="_blank" 
-                               class="whatsapp-pulse flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-3.5 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 font-mono">
+                               class="whatsapp-pulse flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-3.5 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 en-num">
                                 <i class="fa-brands fa-whatsapp text-xl"></i>
                                 <span>07750500007</span>
                             </a>
@@ -243,7 +238,7 @@
                 </div>
             </section>
 
-            <!-- لوحة النتائج والفاتورة التجارية -->
+            <!-- لوحة النتائج -->
             <section id="resultsSection" class="lg:col-span-7 space-y-6 opacity-30 grayscale pointer-events-none transition-all duration-1000">
                 
                 <div class="invoice-print-only invoice-box-print">
@@ -254,8 +249,8 @@
                                 <p class="text-xs text-slate-600 font-bold mt-1">خدمات الأسيكودا والتخليص الجمركي المعتمد - جمهورية العراق</p>
                             </div>
                             <div class="text-left bg-slate-100 p-3 rounded-xl border border-slate-200">
-                                <span class="text-xs font-black text-slate-800 block font-mono">رقم الفاتورة: #MN-<span id="printInvoiceId">2026</span></span>
-                                <span class="text-xs font-bold text-slate-600 block mt-1 font-mono">تاريخ الإصدار: <span id="printDate"></span></span>
+                                <span class="text-xs font-black text-slate-800 block">رقم الفاتورة: #MN-<span id="printInvoiceId" class="en-num">2026</span></span>
+                                <span class="text-xs font-bold text-slate-600 block mt-1">تاريخ الإصدار: <span id="printDate" class="en-num"></span></span>
                             </div>
                         </div>
                     </div>
@@ -265,7 +260,7 @@
                     <div class="bg-white/5 rounded-[2.9rem] p-8 text-center text-white relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/10 to-transparent"></div>
                         <span class="text-blue-400 text-xs font-black uppercase tracking-[0.2em] relative z-10">إجمالي المبلغ المستحق للدفع</span>
-                        <h3 id="displayFinal" class="text-4xl md:text-5xl font-black mt-3 tracking-tighter relative z-10 font-mono">0.00 <small class="text-xl font-bold opacity-50 font-sans">د.ع</small></h3>
+                        <h3 id="displayFinal" class="text-4xl md:text-5xl font-black mt-3 tracking-tighter relative z-10 en-num">0.00 <small class="text-xl font-bold opacity-50 font-sans">د.ع</small></h3>
                     </div>
                 </div>
 
@@ -283,23 +278,23 @@
                             </div>
                             <div class="flex justify-between items-center group">
                                 <span class="text-sm text-slate-500">الرسم الكمركي:</span>
-                                <span id="valBase" class="font-bold text-slate-900 font-mono">-</span>
+                                <span id="valBase" class="font-bold text-slate-900 en-num">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
                                 <span class="text-sm text-slate-500">الضريبة:</span>
-                                <span id="valTax" class="font-bold text-slate-900 font-mono">-</span>
+                                <span id="valTax" class="font-bold text-slate-900 en-num">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
-                                <span class="text-sm text-slate-500 font-semibold text-blue-600">دعم التصدير (<span class="font-mono">0.5%</span>):</span>
-                                <span id="valExport" class="font-bold text-blue-600 font-mono">-</span>
+                                <span class="text-sm text-slate-500 font-semibold text-blue-600">دعم التصدير (<span class="en-num">0.5%</span>):</span>
+                                <span id="valExport" class="font-bold text-blue-600 en-num">-</span>
                             </div>
                             <div class="flex justify-between items-center group">
                                 <span class="text-sm text-slate-500">أجور خدمات ثابتة:</span>
-                                <span class="font-bold text-slate-900 font-mono">76,000 <small class="font-sans">د.ع</small></span>
+                                <span class="font-bold text-slate-900 en-num">76,000 <small class="font-sans">د.ع</small></span>
                             </div>
                             <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
                                 <span class="text-xs font-black text-slate-400">إضافات أخرى:</span>
-                                <span id="valExtra" class="font-bold text-slate-800 font-mono">-</span>
+                                <span id="valExtra" class="font-bold text-slate-800 en-num">-</span>
                             </div>
                         </div>
                     </div>
@@ -340,7 +335,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
                     <div class="md:col-span-4 flex items-center justify-end text-xs text-slate-500 font-bold bg-slate-50 px-4 rounded-2xl border border-slate-200">
-                        <span>إجمالي البنود المسجلة: <strong id="totalItemsCount" class="text-blue-600 font-mono">0</strong> مادة</span>
+                        <span>إجمالي البنود المسجلة: <strong id="totalItemsCount" class="text-blue-600 en-num font-black">0</strong> مادة</span>
                     </div>
                 </div>
 
@@ -357,14 +352,13 @@
                             </tr>
                         </thead>
                         <tbody id="tariffTableBody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
-                            <!-- البيانات التفاعلية -->
                         </tbody>
                     </table>
                 </div>
 
                 <div id="tariffPagination" class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-slate-200">
                     <div class="text-xs text-slate-500 font-bold" id="paginationInfo">
-                        عرض <span id="showingStart" class="text-blue-600 font-black font-mono">0</span> إلى <span id="showingEnd" class="text-blue-600 font-black font-mono">0</span> من أصل <span id="showingTotal" class="text-blue-600 font-black font-mono">0</span> مادة
+                        عرض <span id="showingStart" class="text-blue-600 font-black en-num">0</span> إلى <span id="showingEnd" class="text-blue-600 font-black en-num">0</span> من أصل <span id="showingTotal" class="text-blue-600 font-black en-num">0</span> مادة
                     </div>
                     <div class="flex items-center gap-1.5 flex-wrap justify-center">
                         <button id="firstPageBtn" onclick="goToTariffPage(1)" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
@@ -374,7 +368,7 @@
                             <i class="fa-solid fa-chevron-right text-[10px]"></i>
                             <span>السابق</span>
                         </button>
-                        <div class="bg-slate-100 text-slate-800 px-4 py-2 rounded-xl text-xs font-black shadow-inner font-mono" id="currentPageDisplay">
+                        <div class="bg-slate-100 text-slate-800 px-4 py-2 rounded-xl text-xs font-black shadow-inner en-num" id="currentPageDisplay">
                             Page 1 of 1
                         </div>
                         <button id="nextPageBtn" onclick="changeTariffPage(1)" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5">
@@ -398,10 +392,8 @@
 
     <script>
         let myChart = null;
-        
         let calcData = [];          
         let allTariffData = [];     
-        
         let filteredTariffData = [];
         let currentTariffPage = 1;
         const tariffPageSize = 50;
@@ -417,15 +409,19 @@
             return '';
         }
 
-        // تحويل الأرقام المشرقية إلى أرقام إنجليزية (Western Arabic)
+        // دالة تحويل أي أرقام مشرقية إلى أرقام إنجليزية (1234567890)
         function toEnglishNumbers(str) {
             if (str === null || str === undefined) return '';
-            return str.toString()
-                .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
-                .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            const easternDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+            let s = str.toString();
+            for (let i = 0; i < 10; i++) {
+                s = s.replace(new RegExp(easternDigits[i], 'g'), i)
+                     .replace(new RegExp(persianDigits[i], 'g'), i);
+            }
+            return s;
         }
 
-        // دالة للتحقق من حالة المادة (جديد / مستخدم)
         function getItemStatus(descStr) {
             const str = (descStr || '').toString().toUpperCase();
             if (str.includes('USED') || str.includes('مستخدم') || str.includes('مستعمل')) {
@@ -442,7 +438,7 @@
 
             try {
                 const response = await fetch('pricing.json');
-                if (!response.ok) throw new Error('تعذر تحميل ملف pricing.json الخاص بقسم التعرفة');
+                if (!response.ok) throw new Error('تعذر تحميل ملف pricing.json الخارجي');
                 
                 const data = await response.json();
                 allTariffData = Array.isArray(data) ? data : [];
@@ -483,7 +479,7 @@
         });
 
         function filterGoodsHsCode() {
-            const query = document.getElementById('goodsHsSearch').value.trim().toLowerCase();
+            const query = toEnglishNumbers(document.getElementById('goodsHsSearch').value.trim().toLowerCase());
             const dropdown = document.getElementById('goodsHsDropdown');
 
             if (!query) {
@@ -500,7 +496,7 @@
             }
 
             const matches = sourceArray.filter(item => {
-                const hs = getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().toLowerCase();
+                const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
                 const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                 return hs.includes(query) || desc.includes(query);
             }).slice(0, 15);
@@ -509,7 +505,7 @@
                 dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة لـ "${escapeHtml(query)}"</div>`;
             } else {
                 dropdown.innerHTML = matches.map(item => {
-                    const hs = getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-';
+                    const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
                     const desc = getField(item, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                     const fee = toEnglishNumbers(getField(item, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%');
                     const tax = toEnglishNumbers(getField(item, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%');
@@ -520,12 +516,12 @@
                         <div onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(fee)}', '${escapeHtml(tax)}')" 
                             class="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 text-xs flex justify-between items-center transition-colors">
                             <div>
-                                <span class="font-mono font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
+                                <span class="en-num font-black text-blue-600 ml-2">${escapeHtml(hs)}</span>
                                 <span class="font-bold text-slate-800">${escapeHtml(desc)}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${statusClass}">${status}</span>
-                                <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg font-mono">
+                                <div class="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded-lg en-num">
                                     رسم: <span class="text-blue-600">${escapeHtml(fee)}</span> | ضريبة: <span class="text-emerald-600">${escapeHtml(tax)}</span>
                                 </div>
                             </div>
@@ -538,6 +534,7 @@
         }
 
         function selectTariffCardItem(hs, desc, fee, tax) {
+            hs = toEnglishNumbers(hs);
             document.getElementById('goodsHsSearch').value = `${hs} - ${desc}`;
             document.getElementById('goodsHsDropdown').classList.add('hidden');
             document.getElementById('clearTariffBtn').classList.remove('hidden');
@@ -565,6 +562,7 @@
         }
 
         function transferHsAndPriceToCalculator(hsCode, price) {
+            hsCode = toEnglishNumbers(hsCode);
             const cleanPriceStr = toEnglishNumbers(price).replace(/[^0-9.]/g, '');
             if (cleanPriceStr) {
                 const mainAmtInput = document.getElementById('mainAmount');
@@ -582,7 +580,7 @@
             
             const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
             const match = sourceArray.find(item => {
-                const hs = getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().trim();
+                const hs = toEnglishNumbers(getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).trim();
                 return hs === hsCode.trim();
             });
 
@@ -661,7 +659,7 @@
 
             let rowsHtml = '';
             pageItems.forEach((row, index) => {
-                const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-';
+                const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-');
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
                 const rawPrice = toEnglishNumbers(getField(row, ['التسعيرة', 'price', 'السعر']).toString());
@@ -676,11 +674,11 @@
 
                 rowsHtml += `
                     <tr class="${rowBg}">
-                        <td class="p-4 font-mono font-black text-blue-600">${escapeHtml(hs)}</td>
+                        <td class="p-4 en-num font-black text-blue-600">${escapeHtml(hs)}</td>
                         <td class="p-4 font-bold text-slate-900 max-w-xs">${escapeHtml(desc)}</td>
                         <td class="p-4 text-center">${statusBadge}</td>
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
-                        <td class="p-4 font-mono text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
+                        <td class="p-4 en-num text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
                             <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
@@ -727,12 +725,12 @@
         }
 
         function searchTariffTable() {
-            const filter = document.getElementById('tariffSearchInput').value.trim().toLowerCase();
+            const filter = toEnglishNumbers(document.getElementById('tariffSearchInput').value.trim().toLowerCase());
             if (!filter) {
                 filteredTariffData = allTariffData;
             } else {
                 filteredTariffData = allTariffData.filter(row => {
-                    const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().toLowerCase();
+                    const hs = toEnglishNumbers(getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة'])).toLowerCase();
                     const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']).toString().toLowerCase();
                     const origin = getField(row, ['المنشأ', 'origin']).toString().toLowerCase();
                     const status = getItemStatus(desc).toLowerCase();
@@ -745,7 +743,7 @@
         }
 
         function verifyAccess() {
-            const code = document.getElementById('passCode').value;
+            const code = toEnglishNumbers(document.getElementById('passCode').value);
             const error = document.getElementById('loginError');
             if(code === '13420') {
                 document.getElementById('loginScreen').classList.add('hidden');
