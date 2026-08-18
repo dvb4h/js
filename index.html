@@ -528,6 +528,37 @@
             document.getElementById('inputTaxRate').value = cleanTaxStr;
         }
 
+        // الوظيفة المحدثة لنقل الـ HS CODE والتسعيرة والتنقل لقسم الحاسبة
+        function transferHsAndPriceToCalculator(hsCode, price) {
+            const cleanPriceStr = price.toString().replace(/[^0-9.]/g, '');
+            if (cleanPriceStr) {
+                const mainAmtInput = document.getElementById('mainAmount');
+                mainAmtInput.value = cleanPriceStr;
+                formatCurrency(mainAmtInput);
+            }
+
+            const searchInput = document.getElementById('goodsHsSearch');
+            searchInput.value = hsCode;
+            document.getElementById('clearTariffBtn').classList.remove('hidden');
+
+            switchTab('calculator');
+
+            filterGoodsHsCode();
+            
+            const sourceArray = (calcData && calcData.length > 0) ? calcData : allTariffData;
+            const match = sourceArray.find(item => {
+                const hs = getField(item, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']).toString().trim();
+                return hs === hsCode.trim();
+            });
+
+            if (match) {
+                const desc = getField(match, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
+                const fee = getField(match, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
+                const tax = getField(match, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
+                selectTariffCardItem(hsCode, desc, fee, tax);
+            }
+        }
+
         function updateRatesFromInput() {
             const dutyVal = parseFloat(document.getElementById('inputDutyRate').value) || 0;
             const taxVal = parseFloat(document.getElementById('inputTaxRate').value) || 0;
@@ -599,8 +630,6 @@
             pageItems.forEach((row, index) => {
                 const hs = getField(row, ['HS CODE', 'H.S CODE', 'hsCode', 'رمز التعرفة']) || '-';
                 const desc = getField(row, ['الوصف', 'description', 'المادة', 'اسم المادة']) || '-';
-                const feeRate = getField(row, ['نسبة الرسوم', 'الرسوم', 'duty', 'الرسم']) || '0%';
-                const taxRate = getField(row, ['الضريبة', 'tax', 'الأمانات الضريبية']) || '0%';
                 const origin = getField(row, ['المنشأ', 'origin']) || '-';
                 const rawPrice = getField(row, ['التسعيرة', 'price', 'السعر']).toString();
                 const displayPrice = rawPrice ? (rawPrice.startsWith('$') ? rawPrice : `$${rawPrice}`) : '-';
@@ -614,7 +643,7 @@
                         <td class="p-4 text-xs font-bold text-slate-700">${escapeHtml(origin)}</td>
                         <td class="p-4 font-mono text-xs font-black text-slate-700">${escapeHtml(displayPrice)}</td>
                         <td class="p-4 text-center">
-                            <button onclick="selectTariffCardItem('${escapeHtml(hs)}', '${escapeHtml(desc)}', '${escapeHtml(feeRate)}', '${escapeHtml(taxRate)}'); switchTab('calculator');" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
+                            <button onclick="transferHsAndPriceToCalculator('${escapeHtml(hs)}', '${escapeHtml(rawPrice)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-calculator text-[11px]"></i>
                                 <span>حساب التعرفة</span>
                             </button>
