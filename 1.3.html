@@ -466,48 +466,14 @@
             { "HS CODE": "87032290", "T.S.C CODE": "06", "المنشأ": "كوريا الجنوبية", "الوصف": "سيارة صالون اقتصادية سعة 1600 سي سي", "الشركة المصنعة": "HYUNDAI", "التسعيرة": "$14,200", "سنة الصنع": "2026" }
         ];
 
-        let pricing2Data = [];
-        let tariffJsonData = []; // بيانات جدول التعرفة الجمركية المستخرجة من pricing.json
-
-        // دالة جلب بيانات pricing2.json ديناميكياً مع دعم الاسترجاع المحلي
-        async function loadPricing2File() {
-            try {
-                const response = await fetch('pricing2.json');
-                if (response.ok) {
-                    pricing2Data = await response.json();
-                } else {
-                    throw new Error('File not found via fetch');
-                }
-            } catch (error) {
-                // بيانات احتياطية شاملة لملف pricing2.json لضمان عمل البحث بسلاسة
-                pricing2Data = [
-                    { "HS CODE": "87032390", "الرسوم الجمركية": "15%", "الضريبة": "3%", "الوصف": "سيارة ركاب جديدة سعة المحرك 2000 سي سي" },
-                    { "HS CODE": "87042120", "الرسوم الجمركية": "20%", "الضريبة": "5%", "الوصف": "شاحنة خفيفة نقل بضائع USED" },
-                    { "HS CODE": "84713010", "الرسوم الجمركية": "0%", "الضريبة": "3%", "الوصف": "حاسوب محمول (لابتوب) ذو كفاءة عالية" },
-                    { "HS CODE": "85171300", "الرسوم الجمركية": "10%", "الضريبة": "3%", "الوصف": "هاتف محمول ذكي جديد" },
-                    { "HS CODE": "84151010", "الرسوم الجمركية": "15%", "الضريبة": "5%", "الوصف": "مكيف هواء منزلي سبليت 2 طن" },
-                    { "HS CODE": "87032290", "الرسوم الجمركية": "15%", "الضريبة": "3%", "الوصف": "سيارة صالون اقتصادية سعة 1600 سي سي" }
-                ];
-            }
-        }
-
-        // دالة جلب بيانات جدول التعرفة من ملف pricing.json
-        async function loadTariffJsonFile() {
-            try {
-                const response = await fetch('pricing.json');
-                if (response.ok) {
-                    tariffJsonData = await response.json();
-                    pricingData = tariffJsonData; // تحديث مصفوفة البيانات الرئيسية للجدول
-                } else {
-                    throw new Error('pricing.json not found');
-                }
-            } catch (error) {
-                // إذا لم يتوفر ملف pricing.json، نعتمد البيانات الافتراضية الموجودة مسبقاً
-                console.log('Using default pricingData array for tariff table.');
-            }
-            filteredTariffData = pricingData;
-            renderTariffTable();
-        }
+        let pricing2Data = [
+            { "HS CODE": "87032390", "الرسوم الجمركية": "15%", "الضريبة": "3%" },
+            { "HS CODE": "87042120", "الرسوم الجمركية": "20%", "الضريبة": "5%" },
+            { "HS CODE": "84713010", "الرسوم الجمركية": "0%", "الضريبة": "3%" },
+            { "HS CODE": "85171300", "الرسوم الجمركية": "10%", "الضريبة": "3%" },
+            { "HS CODE": "84151010", "الرسوم الجمركية": "15%", "الضريبة": "5%" },
+            { "HS CODE": "87032290", "الرسوم الجمركية": "15%", "الضريبة": "3%" }
+        ];
         
         let currentPage = 1;
         const rowsPerPage = 50;
@@ -516,8 +482,6 @@
         function loadAllData() {
             filteredTariffData = pricingData;
             renderTariffTable();
-            loadPricing2File(); // تحميل بيانات pricing2.json عند بدء التشغيل
-            loadTariffJsonFile(); // تحميل بيانات جدول التعرفة من pricing.json
         }
         window.addEventListener('DOMContentLoaded', loadAllData);
 
@@ -525,7 +489,7 @@
             if(e) e.preventDefault();
             const code = document.getElementById('passCode').value;
             const error = document.getElementById('loginError');
-            if(code === '13420') {
+            if(code === '1100') {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
             } else {
@@ -558,43 +522,42 @@
             const query = document.getElementById('searchHsInput').value.trim().toLowerCase();
             const dropdown = document.getElementById('hsDropdownResults');
             
-            if(!query) {
+            if(!query || pricing2Data.length === 0) {
                 dropdown.classList.add('hidden');
                 return;
             }
 
             const filtered = pricing2Data.filter(item => {
-                for (let key of Object.keys(item)) {
-                    const val = (item[key] || '').toString().toLowerCase();
-                    if (val.includes(query)) return true;
+                const keys = Object.keys(item);
+                for (let key of keys) {
+                    if (key.toLowerCase().includes('hs') || key.toLowerCase().includes('رمز')) {
+                        const val = (item[key] || '').toString().toLowerCase();
+                        if (val.includes(query)) return true;
+                    }
                 }
                 return false;
             });
 
             if(filtered.length === 0) {
-                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة في ملف pricing2.json</div>`;
+                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 font-bold text-center">لا توجد نتائج مطابقة في pricing2.json</div>`;
                 dropdown.classList.remove('hidden');
                 return;
             }
 
             let html = '';
             filtered.forEach(item => {
-                let hs = '', fee = '15%', tax = '3%', desc = '';
+                let hs = '', fee = '15%', tax = '3%';
                 for (let key of Object.keys(item)) {
                     const k = key.toLowerCase();
                     if (k.includes('hs') || k.includes('رمز')) hs = item[key];
                     if (k.includes('رسوم')) fee = item[key];
                     if (k.includes('ضريبة')) tax = item[key];
-                    if (k.includes('وصف')) desc = item[key];
                 }
 
                 html += `
-                    <div onclick="selectPricing2Item('${hs}', '${fee}', '${tax}', '${desc}')" class="p-3 hover:bg-amber-950/40 cursor-pointer border-b border-slate-800 text-xs">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-amber-400">HS CODE: ${hs}</span>
-                            <span class="text-[10px] text-slate-400">الرسوم: ${fee} | الضريبة: ${tax}</span>
-                        </div>
-                        ${desc ? `<div class="text-[11px] text-slate-300 mt-1">${desc}</div>` : ''}
+                    <div onclick="selectPricing2Item('${hs}', '${fee}', '${tax}')" class="p-3 hover:bg-amber-950/40 cursor-pointer border-b border-slate-800 text-xs">
+                        <div class="font-black text-amber-400">HS CODE: ${hs}</div>
+                        <div class="text-[10px] text-slate-400 mt-1">نسبة الرسوم: ${fee} | الضريبة: ${tax}</div>
                     </div>
                 `;
             });
@@ -603,16 +566,11 @@
             dropdown.classList.remove('hidden');
         }
 
-        function selectPricing2Item(hs, fee, tax, desc) {
+        function selectPricing2Item(hs, fee, tax) {
             document.getElementById('searchHsInput').value = hs;
             document.getElementById('autoFeePercent').value = fee || '15%';
             document.getElementById('autoTaxPercent').value = tax || '3%';
             document.getElementById('hsDropdownResults').classList.add('hidden');
-            
-            if (desc) {
-                checkItemCondition(desc);
-            }
-            
             performCalculation();
         }
 
@@ -827,8 +785,7 @@
                 const hs = (row['HS CODE'] || row['H.S CODE'] || row.hsCode || '').toLowerCase();
                 const desc = (row['الوصف'] || row.description || '').toLowerCase();
                 const origin = (row['المنشأ'] || row.origin || '').toLowerCase();
-                const brand = (row['الشركة المصنعة'] || row.manufacturer || '').toLowerCase();
-                return hs.includes(query) || desc.includes(query) || origin.includes(query) || brand.includes(query);
+                return hs.includes(query) || desc.includes(query) || origin.includes(query);
             });
             currentPage = 1;
             renderTariffTable();
